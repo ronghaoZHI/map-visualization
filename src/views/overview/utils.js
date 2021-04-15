@@ -31,7 +31,7 @@ export const getLineMaterial = (color = '#6166F9') => {
 }
 
 // 
-export const getPolygonsByFeatures = (features, height = 1000) => {
+export const getPolygonsByFeatures = (features, height = 10) => {
   const polygons = features.map(f => {
     const polygon = maptalks.GeoJSON.toGeometry(f);
     polygon.setProperties({
@@ -65,3 +65,8 @@ export const getFeaturesByCode = (adcode, name) =>
     (v.properties.adcode == adcode || v.properties.name == name)
   )];
 //
+export const sleep = (time) => {
+  return new Promise(res => {
+    setTimeout(res, time);
+  });
+};

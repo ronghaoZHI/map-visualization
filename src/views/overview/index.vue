@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     initMap(dom) {
-      initChinaMap(dom);
+      initChinaMap(dom, this);
     }
   }
 };
@@ -85,14 +85,16 @@ export default {
   height: 100%;
   overflow: hidden;
 }
-
+* {
+  color: var(--themeColor);
+}
 .header {
   position: absolute;
   left: 3.3vw;
   top: 3.6vh;
   display: flex;
   align-items: center;
-
+  
   .logo {
     margin-top: 6px;
     width: 220px;

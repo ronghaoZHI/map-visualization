@@ -2,7 +2,9 @@ const maptalks = window.maptalks;
 const THREE = window.THREE;
 export default class OutLine extends maptalks.BaseObject {
   constructor(mesh, options, material, layer) {
-    options = maptalks.Util.extend({}, {}, options, {
+    options = maptalks.Util.extend({}, {
+      altitude: 0
+    }, options, {
       layer
     });
     super();
