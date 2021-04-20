@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "format-date-time": "^0.3.3",
     "swiper": "^6.5.6",
     "vue": "^2.6.11",
     "vue-awesome-swiper": "^4.1.1",
@@ -39,9 +40,7 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {
-      
-    }
+    "rules": {}
   },
   "browserslist": [
     "> 1%",

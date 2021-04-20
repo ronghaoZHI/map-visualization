@@ -3919,6 +3919,11 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
+format-date-time@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.npmjs.org/format-date-time/-/format-date-time-0.3.3.tgz#236926fbf9eb9b494b6df039b64aa6e7d3636fe3"
+  integrity sha512-JftfqJaxgmvKM658sSoEbILJVshLg/TfbRVLPHGe9lXfMATfAcGQtoDNbz/cFC5ArC16i+BRMfy1wDgc7QwfVA==
+
 forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.npm.taobao.org/forwarded/download/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
@@ -7786,11 +7791,6 @@ thread-loader@^2.1.3:
     loader-runner "^2.3.1"
     loader-utils "^1.1.0"
     neo-async "^2.6.0"
-
-three@^0.127.0:
-  version "0.127.0"
-  resolved "https://registry.npmjs.org/three/-/three-0.127.0.tgz#c463f4d41b2c735dcf8e9e51a388815e80cd3791"
-  integrity sha512-wtgrn+mhYUbobxT7QN3GPdu3SRpSBQvwY6uOzLChWS7QE//f7paDU/+wlzbg+ngeIvBBqjBHSRuywTh8A99Jng==
 
 through2@^2.0.0:
   version "2.0.5"

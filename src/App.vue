@@ -25,6 +25,7 @@ export default {
 }
 
 html, body, #app {
+  user-select: none;
   border: 0;
   padding: 0;
   margin: 0;

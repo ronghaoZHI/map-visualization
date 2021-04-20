@@ -38,6 +38,14 @@
               :stroke-dashoffset="circumference"
               :stroke-linecap="strokeLinecap"
               :style="progressStyle"></circle>
+       <circle :cx="radius" 
+               :cy="radius" 
+               :r="innerDashCircleRadius" 
+               stroke="#838486" 
+               stroke-width="2"  
+               :stroke-dasharray="innerDashCircleDasharray" 
+               fill="transparent"
+               :style="innerDashStyle" />
     </svg>
   </div>
 </template>
@@ -83,7 +91,7 @@ export default {
     strokeLinecap: {
       type: String,
       required: false,
-      default: 'round'
+      default: 'butt'
     },
     animateSpeed: {
       type: Number,
@@ -189,6 +197,19 @@ export default {
         width: `${this.innerCircleDiameter}px`
       }
     },
+    innerDashCircleRadius() {
+      return this.innerCircleDiameter / 2 - 8;
+    },
+    innerDashCircleDasharray() {
+      return 2 * Math.PI * (this.innerDashCircleRadius - 10) / 6;
+    },
+    innerDashStyle() {
+      return {
+        strokeWidth: `2px`,
+        animation: '_circleloop 5s linear infinite',
+        transformOrigin: 'center',
+      }
+    }
   },
   methods: {
     getStopPointsOfCircle (steps) {
@@ -281,5 +302,13 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+@keyframes _circleloop {
+  0% {
+    transform: rotateZ(0);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }
 </style>

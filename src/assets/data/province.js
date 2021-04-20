@@ -3,6 +3,8 @@ export const allProvince_geojson = {
   "features": [{
     "type": "Feature",
     "properties": {
+      "zoom": 8.5,
+      "offset": [1.2, 0.4],
       "adcode": 110000,
       "name": "北京市",
       "center": [116.405285, 39.904989],
@@ -156,6 +158,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 8.5,
+      "offset": [1.2, 0.4],
       "adcode": 120000,
       "name": "天津市",
       "center": [117.190182, 39.125596],
@@ -292,6 +296,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.7,
+      "offset": [7, 0.4],
       "adcode": 130000,
       "name": "河北省",
       "center": [114.502461, 38.045474],
@@ -842,6 +848,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.7,
+      "offset": [5, 0.7],
       "adcode": 140000,
       "name": "山西省",
       "center": [112.549248, 37.857014],
@@ -1058,6 +1066,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 5.8,
+      "offset": [9, 3.0],
       "adcode": 150000,
       "name": "内蒙古自治区",
       "center": [111.670801, 40.818311],
@@ -2062,6 +2072,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.7,
+      "offset": [5, 0.0],
       "adcode": 210000,
       "name": "辽宁省",
       "center": [123.429096, 41.796767],
@@ -2389,6 +2401,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.7,
+      "offset": [6, 0.7],
       "adcode": 220000,
       "name": "吉林省",
       "center": [125.3245, 43.886841],
@@ -2789,6 +2803,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.2,
+      "offset": [5, 3],
       "adcode": 230000,
       "name": "黑龙江省",
       "center": [126.642464, 45.756967],
@@ -3416,6 +3432,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 8.5,
+      "offset": [1, 0],
       "adcode": 310000,
       "name": "上海市",
       "center": [121.472644, 31.231706],
@@ -3511,6 +3529,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [4, 0.7],
       "adcode": 320000,
       "name": "江苏省",
       "center": [118.767413, 32.041544],
@@ -3736,6 +3756,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [4, -1.5],
       "adcode": 330000,
       "name": "浙江省",
       "center": [120.153576, 30.287459],
@@ -4048,6 +4070,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [4, 0.7],
       "adcode": 340000,
       "name": "安徽省",
       "center": [117.283042, 31.86119],
@@ -4368,6 +4392,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [3, 0],
       "adcode": 350000,
       "name": "福建省",
       "center": [119.306239, 26.075302],
@@ -4650,6 +4676,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [3, -1],
       "adcode": 360000,
       "name": "江西省",
       "center": [115.892151, 28.676493],
@@ -4899,6 +4927,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [4, 0.7],
       "adcode": 370000,
       "name": "山东省",
       "center": [117.000923, 36.675807],
@@ -5227,6 +5257,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [4, -0.5],
       "adcode": 410000,
       "name": "河南省",
       "center": [113.665412, 34.757975],
@@ -5513,6 +5545,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [1.5, 0.7],
       "adcode": 420000,
       "name": "湖北省",
       "center": [114.298572, 30.584355],
@@ -5848,6 +5882,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7.1,
+      "offset": [1.5, -1],
       "adcode": 430000,
       "name": "湖南省",
       "center": [112.982279, 28.19409],
@@ -6163,6 +6199,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [3, -0.7],
       "adcode": 440000,
       "name": "广东省",
       "center": [113.280637, 23.125178],
@@ -6540,6 +6578,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7,
+      "offset": [3, -0.1],
       "adcode": 450000,
       "name": "广西壮族自治区",
       "center": [108.320004, 22.82402],
@@ -6841,6 +6881,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7.8,
+      "offset": [1, -1],
       "adcode": 460000,
       "name": "海南省",
       "center": [110.33119, 20.031971],
@@ -7068,6 +7110,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7.6,
+      "offset": [4, 0.7],
       "adcode": 500000,
       "name": "重庆市",
       "center": [106.504962, 29.533155],
@@ -7366,6 +7410,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.6,
+      "offset": [2, 0],
       "adcode": 510000,
       "name": "四川省",
       "center": [104.065735, 30.659462],
@@ -7921,6 +7967,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7.4,
+      "offset": [1.5, 0.5],
       "adcode": 520000,
       "name": "贵州省",
       "center": [106.713478, 26.578343],
@@ -8230,6 +8278,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.9,
+      "offset": [1.5, 0.5],
       "adcode": 530000,
       "name": "云南省",
       "center": [102.712251, 25.040609],
@@ -8693,6 +8743,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.5,
+      "offset": [1, 1.5],
       "adcode": 540000,
       "name": "西藏自治区",
       "center": [91.132212, 29.660361],
@@ -9298,6 +9350,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.7,
+      "offset": [3, 1],
       "adcode": 610000,
       "name": "陕西省",
       "center": [108.948024, 34.263161],
@@ -9653,6 +9707,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.4,
+      "offset": [1.5, 1.5],
       "adcode": 620000,
       "name": "甘肃省",
       "center": [103.823557, 36.058039],
@@ -10280,6 +10336,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 6.5,
+      "offset": [-0.5, -0.5],
       "adcode": 630000,
       "name": "青海省",
       "center": [101.778916, 36.623178],
@@ -10768,6 +10826,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7.3,
+      "offset": [1.5, -1.5],
       "adcode": 640000,
       "name": "宁夏回族自治区",
       "center": [106.278179, 38.46637],
@@ -10957,6 +11017,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 5.8,
+      "offset": [2, -1.9],
       "adcode": 650000,
       "name": "新疆维吾尔自治区",
       "center": [87.617733, 43.792818],
@@ -11597,6 +11659,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 7.5,
+      "offset": [1.5, -1.3],
       "adcode": 710000,
       "name": "台湾省",
       "center": [121.509062, 25.044332],
@@ -11740,6 +11804,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 9,
+      "offset": [0.5, 0.2],
       "adcode": 810000,
       "name": "香港特别行政区",
       "center": [114.173355, 22.320048],
@@ -11821,6 +11887,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
+      "zoom": 9,
+      "offset": [0.5, 0],
       "adcode": 820000,
       "name": "澳门特别行政区",
       "center": [113.54909, 22.198951],
