@@ -17,7 +17,7 @@ export const getLineMaterial = ({color = '#7172FF', opacity}) => {
   const lineMaterial = new THREE.LineBasicMaterial({
     color, // 线的颜色
     transparent: true,
-    linewidth: 1,
+    linewidth: 10,
     opacity,
     depthTest: true,
   });
@@ -70,7 +70,15 @@ export const progressColor = [
   }
 ];
 
-export const sceneTypes = Object.keys(themeColor);
+export const sceneTypes = Object.keys(themeColor).map((v, i) => {
+  return {
+    dataType: v,
+    id: i == 0 ?
+      '13' : 
+      i == 1 ? 
+      '1' : '12',
+  }
+});
 // 
 export const directlyCity = ['北京市', '天津市', '上海市', '重庆市'];
 // 
@@ -88,3 +96,44 @@ export const sleep = (time) => {
     setTimeout(res, time);
   });
 };
+
+import { getCityCount, getCityList } from '../../api/index';
+
+export const getAllCityList = async () => {
+  const len = sceneTypes.length;
+  const cityLists = sceneTypes.map(v => getCityList({ dataType: v.id }));
+  const cityCounts = sceneTypes.map(v => getCityCount({ dataType: v.id }));
+  let res = [];
+  let result = [];
+  try {
+    res = await Promise.all([...cityLists, ...cityCounts]);
+
+    result = res.slice(0, len).map((v) => {
+      return {
+        data: v.data,
+      }
+    });
+    result = res.slice(len).map((v, i) => {
+      return {
+        data: result[i].data ,
+        ...v.data,
+        dataType: sceneTypes[i].dataType
+      }
+    });
+    result = result.map(v => {
+      v.data = v.data.map(item => {
+        return {
+          ...item,
+          geojosn: getFeaturesByCode(item.parentCode == 100000 ? item.areaCode : item.parentCode)[0]
+        }
+      });
+
+      return v;
+    })
+  } catch (error) {
+    console.error(error);   
+  }
+
+  console.log(result);
+  return Promise.resolve(result);
+}

@@ -21,6 +21,7 @@ import {
   sleep,
   progressColor as pColor,
   themeTitle as tTitle,
+  getAllCityList,
 } from './utils';
 
 let THREE = window.THREE;
@@ -58,11 +59,11 @@ let progressColor = pColor[0];
 let themeTitle = tTitle[0];
 const material = _gmpm(chinaMeshColor.black);
 const lineMaterial_china = _glm({
-  color: themeColor[curType],
+  color: themeColor[curType.dataType],
   opacity: 0.8
 });
 const lineMaterial = _glm({
-  color: themeColor[curType],
+  color: themeColor[curType.dataType],
   opacity: 1.0
 });
 let china_mesh, china_outLine_mesh;
@@ -103,8 +104,7 @@ export const initChinaMap = async (dom, _vue) => {
 
   setTimeout(() => {
     marker_dom = document.querySelector('.city_marker');
-
-    console.log('marker_dom', marker_dom);
+    // console.log('marker_dom', marker_dom);
   }, 0);
 
   initChinaLayer(_vue);
@@ -115,25 +115,28 @@ export const initChinaMap = async (dom, _vue) => {
 let first = true;
 // 主函数 递归调用 无限循环
 async function runMain(_vue) {
-  //  getCityList()  let { data:cityList } = await getCityListByServer()
-  let cityList = allProvince_geojson.features.slice(0, 2);
+  let allCityList = await getAllCityList();
+
   // 更新服务端数据 拉取时间
   const fDate = new DateTimeFormat();
   _vue.updateTime = fDate.now('YYYY.MM.DD &nbsp;&nbsp; HH:mm:ss') + '更新';
   // 循环三种数据类型场景
   for (let i = 0; i < sceneTypes.length; i++) {
-    
     curType = sceneTypes[i];
     progressColor = pColor[i];
     themeTitle = tTitle[i];
+    let curCityList = allCityList.find(v => v.dataType === curType.dataType);
 
+    console.log('curCityList', curCityList);
+
+    let cityList = curCityList.data;
     if(first) {
-      await sleep(9000);
+      await sleep(8000);
     }
     // 更新类型
     changeSceneType(_vue, cityList, {
       type: curType,
-      color: themeColor[curType],
+      color: themeColor[curType.dataType],
       progressColor,
       themeTitle,
     });
@@ -148,26 +151,26 @@ async function runMain(_vue) {
     for (let j = 0; j < cityList.length; j++) {
       // debugger
       const curCity = cityList[j];
-      console.log('curCity', curCity);
+      // console.log('curCity', curCity);
 
       if (!lastCity) {
         await china2Province({
-          zoom: curCity.properties.zoom,
-          adcode: curCity.properties.adcode,
-          name: curCity.properties.name,
-          center: curCity.properties.center,
-          location: curCity.properties.center,
-          offset: curCity.properties.offset
+          zoom: curCity.geojson.properties.zoom,
+          adcode: curCity.geojson.properties.adcode,
+          name: curCity.geojson.properties.name,
+          center: curCity.geojson.properties.center,
+          location: curCity.geojson.properties.center,
+          offset: curCity.geojson.properties.offset
         })
       } else if (
-        curCity.properties.adcode.toString().substring(0, 2) ==
+        curCity.geojson.properties.adcode.toString().substring(0, 2) ==
         lastCity.properties.adcode.toString().substring(0, 2)
       ) {
         // diff citycode 前两位是否变化判断切换逻辑， 变化则 需要先切换到全国再切换到省份
         await city2city({
           maker: {
-            name: curCity.properties.name,
-            location: curCity.properties.center,
+            name: curCity.geojson.properties.name,
+            location: curCity.geojson.properties.center,
           }
         })
         sleep(3000);
@@ -178,12 +181,12 @@ async function runMain(_vue) {
         await sleep(3000);
 
         await china2Province({
-          zoom: curCity.properties.zoom,
-          adcode: curCity.properties.adcode,
-          name: curCity.properties.name,
-          center: curCity.properties.center,
-          location: curCity.properties.center,
-          offset: curCity.properties.offset
+          zoom: curCity.geojson.properties.zoom,
+          adcode: curCity.geojson.properties.adcode,
+          name: curCity.geojson.properties.name,
+          center: curCity.geojson.properties.center,
+          location: curCity.geojson.properties.center,
+          offset: curCity.geojson.properties.offset
         })
 
         sleep(3000);
@@ -265,11 +268,11 @@ export const changeSceneType = async (_vue, cityList, {
   progressColor,
   themeTitle
 }) => {
-  console.log('changeSceneType', _vue, cityList, color, progressColor, themeTitle);
+  // console.log('changeSceneType', _vue, cityList, color, progressColor, themeTitle);
 
   // update citymarker
-  const name = cityList[0].properties.name;
-  const location = cityList[0].properties.center;
+  const name = cityList[0].geojson.properties.name;
+  const location = cityList[0].geojson.properties.center;
   updateCityMarker(name, location);
   // update css themeColor
   document.documentElement.style.setProperty('--themeColor', color);
@@ -285,22 +288,27 @@ export const changeSceneType = async (_vue, cityList, {
     _vue.progressStopColor = progressColor.stopColor;
     _vue.swiperType.slideNext(1000, false);
   }
-  // _vue.curCityList = cityList;
-  _vue.themeTitle = themeTitle;
-  _vue.cityCount = 50;
-  _vue.cityTotal = 100;
-  _vue.cityPercent = 50;
-  _vue.completedProgress = 0;
-  await sleep(0);
-  _vue.completedProgress = 50;
-  
+
+  if (!first) {
+    _vue.themeTitle = themeTitle;
+    _vue.cityCount = 0;
+    _vue.cityTotal = 100;
+    _vue.cityPercent = 0;
+    _vue.completedProgress = 0;
+    await sleep(600);
+    _vue.cityCount = 50;
+    _vue.cityTotal = 100;
+    _vue.completedProgress = 50;
+    _vue.cityPercent = 50;
+  }
+ 
   // 右下角城市渐变
   if(!first) {
     _vue.cityStyle = _vue.fadeIn;
     await sleep(0);
     _vue.resetCityList = false;
     // 城市列表
-    _vue.curCityList = [].concat(_vue.curCityList.slice(0));
+    _vue.curCityList = cityList;
     // 右下角城市渐变
     _vue.cityStyle = _vue.fadeOut;
     await sleep(0);
@@ -311,7 +319,7 @@ export const changeSceneType = async (_vue, cityList, {
 }
 // 
 export const province2China = async (to) => {
-  console.log('province2China', to);
+  // console.log('province2China', to);
   {
     let time = 0;
     let timer = setInterval(() => {
@@ -353,7 +361,7 @@ export const china2Province = async ({
   offset,
   location
 }) => {
-  console.log('china2Province', zoom, adcode, name, center, offset);
+  // console.log('china2Province', zoom, adcode, name, center, offset);
   map.animateTo({
     // center: [center[0] + 4, center[1] + 0.7],
     center: [center[0] + (offset ? offset[0] : 4), center[1] + (offset ? offset[1] : 0.7)],
@@ -383,7 +391,7 @@ export const city2city = async ({
     location
   }
 }) => {
-  console.log('city2city', maker)
+  // console.log('city2city', maker);
   // 右侧城市 滚动
 
   await updateCityMarker(name, location);
@@ -406,7 +414,7 @@ function initMarker() {
 }
 // 
 async function updateCityMarker(label, [lon, lat]) {
-  console.log('updateCityMarker', label, [lon, lat])
+  // console.log('updateCityMarker', label, [lon, lat]);
   city_marker.updateMarkerText(label);
   // 更新位置
   const coord = new maptalks.Coordinate(lon, lat);
@@ -448,9 +456,8 @@ function initChinaLayer() {
       interactive: false,
       altitude: 1
     }, lineMaterial_china, threeLayer);
-    console.log(china_outLine_mesh)
-    meshs.push(china_outLine_mesh);
 
+    meshs.push(china_outLine_mesh);
     // 
     threeLayer.addMesh(meshs);
     // animation();

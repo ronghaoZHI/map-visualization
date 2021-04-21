@@ -10,6 +10,12 @@ module.exports = {
       .set('@utils', resolve('src/utils'));
   },
   devServer: {
-    host: '0.0.0.0',
+    proxy: {
+      '/api': {
+        target: 'http://tdata.airlook.com',
+        ws: true,
+        changeOrigin: true
+      },
+    }
   }
 }

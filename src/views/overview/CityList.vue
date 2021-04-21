@@ -1,5 +1,4 @@
 <template>
-
   <div class="swp">
     <swiper class="list" ref="swiper-city" :options="swiperCityOpt">
       <swiper-slide class="list-item" v-for="(item) in dataList" :key="item.name">
@@ -64,6 +63,7 @@ export default {
 			justify-content: space-between;
 			border-bottom: 1px solid #6C6C6C;
 			align-items: flex-end;
+			word-break: keep-all;
 			.area { 
 				text-align: right;
 			}

@@ -17,8 +17,8 @@
           y2="99.823163%"
           :id="'linearGradient-' + _uid"
         >
-          <stop offset="30%" :stop-color="startColor" />
-          <stop offset="100%" :stop-color="stopColor" />
+          <stop offset="30%" :stop-color="stopColor" />
+          <stop offset="100%" :stop-color="startColor" />
         </linearGradient>
       </defs>
       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">

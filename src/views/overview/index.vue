@@ -123,28 +123,7 @@ export default {
       cityCount: 50,
       cityTotal: 100,
       completedProgress: 0,
-      curCityList: [
-        {
-          name: "某某某市0",
-          area: "350"
-        },
-        {
-          name: "某某某某市1",
-          area: "260"
-        },
-        {
-          name: "某某某市2",
-          area: "350"
-        },
-        {
-          name: "某某某市3",
-          area: "350"
-        },
-        {
-          name: "某某某某市4",
-          area: "260"
-        }
-      ],
+      curCityList: [],
       swiperTypeOpt: {
         direction: "vertical",
         loop: true,
@@ -180,7 +159,7 @@ export default {
       this.completedProgress = 50;
       setTimeout(() => {
         this.resetCityList = true;
-      }, 500);
+      }, 200);
     }, 4000);
   },
   methods: {
@@ -269,6 +248,7 @@ export default {
   font-family: PingFangSC-Medium;
   width: 25.5vw;
   max-width: 490px;
+  min-width: 400px;
   position: absolute;
   right: 1vw;
   top: 9vh;
