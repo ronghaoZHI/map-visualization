@@ -1,5 +1,12 @@
-let THREE = window.THREE;
-let maptalks = window.maptalks
+const THREE = window.THREE;
+const maptalks = window.maptalks;
+const _districtService = new window.AMap.DistrictSearch({
+  subdistrict: 1, 
+  showbiz: false,
+  level: 'city',
+  // extensions: 'all'
+});
+
 // 
 export const getMeshPhongMaterial = (color) => {
   const material = new THREE.MeshPhongMaterial({
@@ -124,7 +131,7 @@ export const getAllCityList = async () => {
       v.data = v.data.map(item => {
         return {
           ...item,
-          geojosn: getFeaturesByCode(item.parentCode == 100000 ? item.areaCode : item.parentCode)[0]
+          geojson: getFeaturesByCode(item.parentCode == 100000 ? item.areaCode : item.parentCode)[0]
         }
       });
 
@@ -136,4 +143,18 @@ export const getAllCityList = async () => {
 
   console.log(result);
   return Promise.resolve(result);
+}
+
+export const getCityCenterByCode = async (code) => {
+  return new Promise((res, rej) => {
+    _districtService.search(code, (status, result) => {
+      if(status === 'complete') {
+        console.log(code, result);
+        const r = result.districtList[0];
+        res([r.center.lng, r.center.lat]);
+      } else {
+        rej(result);
+      }
+    })
+  })
 }

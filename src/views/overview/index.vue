@@ -63,7 +63,7 @@
               :animateSpeed="1500"
             >
               <div class="percent">
-                {{ cityPercent }}<span class="symbol">%</span>
+                {{ completedProgress }}<span class="symbol">%</span>
               </div>
               <div class="num">{{ cityCount + "/" + cityTotal }}</div>
             </ProgressBar>
@@ -119,9 +119,8 @@ export default {
       themeTitle: themeTitle[0],
       progressStartColor: progressColor[0].startColor,
       progressStopColor: progressColor[0].stopColor,
-      cityPercent: 50,
-      cityCount: 50,
-      cityTotal: 100,
+      cityCount: 0,
+      cityTotal: 0,
       completedProgress: 0,
       curCityList: [],
       swiperTypeOpt: {
@@ -145,7 +144,7 @@ export default {
   },
   watch: {
     swiperCityList() {
-      console.log("Swiper instance object", this.swiperType, this.swiperCityList);
+      // console.log("Swiper instance object", this.swiperType, this.swiperCityList);
     }
   },
   computed: {
@@ -155,12 +154,6 @@ export default {
   },
   mounted() {
     this.initMap("maptalks");
-    setTimeout(() => {
-      this.completedProgress = 50;
-      setTimeout(() => {
-        this.resetCityList = true;
-      }, 200);
-    }, 4000);
   },
   methods: {
     initMap(dom) {
@@ -401,6 +394,60 @@ export default {
 </style>
 
 <style lang="less">
+.history_marker {
+  width: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  position: relative;
+  .circle {
+    width: 12px;
+    height: 6px;
+    background: var(--themeColor);
+    border-radius: 50%;
+    position: relative;
+    top: 2px;
+  }
+  .circle1 {
+    width: 20px;
+    height: 10px;
+    background: transparent;
+    border: 1px solid var(--themeColor);
+    border-radius: 50%;
+    animation: scale 1.4s linear 0.7s infinite;
+    position: relative;
+    top: -8px;
+  }
+
+  .circle2 {
+    width: 20px;
+    height: 10px;
+    border: 1px solid var(--themeColor);
+    border-radius: 50%;
+    background: transparent;
+    position: relative;
+    top: -20px;
+    animation: _scale 1.4s linear infinite;
+  }
+  @keyframes _scale {
+    0% {
+      transform: scale3d(0, 0, 0);
+      border-color: var(--themeColor);
+      opacity: 1;
+    }
+    90% {
+      transform: scale3d(1.6, 1.6, 1.6) translateY(4px);
+      border-color: var(--themeColor);
+      opacity: 0.2;
+    }
+    100% {
+      transform: scale3d(1.7, 1.7, 1.7) translateY(4px);
+      border-color: var(--themeColor);
+      opacity: 0;
+    }
+  }
+}
 .city_marker {
   will-change: auto;
   color: aqua;
@@ -419,6 +466,7 @@ export default {
     flex-direction: column;
     align-items: center;
     z-index: 1;
+    position: relative;
 
     .icon {
       width: 18px;
@@ -465,23 +513,23 @@ export default {
     letter-spacing: 1px;
     text-align: left;
   }
-}
-
-@keyframes scale {
-  0% {
-    transform: scale3d(0, 0, 0);
-    border-color: var(--themeColor);
-    opacity: 1;
-  }
-  90% {
-    transform: scale3d(1.6, 1.6, 1.6) translateY(4px);
-    border-color: var(--themeColor);
-    opacity: 0.2;
-  }
-  100% {
-    transform: scale3d(1.7, 1.7, 1.7) translateY(4px);
-    border-color: var(--themeColor);
-    opacity: 0;
+  
+  @keyframes scale {
+    0% {
+      transform: scale3d(0, 0, 0);
+      border-color: var(--themeColor);
+      opacity: 1;
+    }
+    90% {
+      transform: scale3d(1.6, 1.6, 1.6) translateY(4px);
+      border-color: var(--themeColor);
+      opacity: 0.2;
+    }
+    100% {
+      transform: scale3d(1.7, 1.7, 1.7) translateY(4px);
+      border-color: var(--themeColor);
+      opacity: 0;
+    }
   }
 }
 .maptalks-attribution {
@@ -493,6 +541,9 @@ export default {
 .cityfade-leave-active {
   animation: fade_in 2s ease;
 }
+
+
+
 
 @keyframes fade_out {
   0% {

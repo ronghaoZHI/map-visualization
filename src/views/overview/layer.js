@@ -4,12 +4,7 @@ import {
   china_geojson
 } from '@/assets/data/china';
 
-import {
-  allProvince_geojson
-} from '@/assets/data/province';
-
-import OutLine from './Outline';
-
+import OutLine from './three/Outline';
 import {
   getMeshPhongMaterial as _gmpm,
   getPolygonsByFeatures as _gpf,
@@ -22,6 +17,7 @@ import {
   progressColor as pColor,
   themeTitle as tTitle,
   getAllCityList,
+  getCityCenterByCode,
 } from './utils';
 
 let THREE = window.THREE;
@@ -73,7 +69,9 @@ let province_mesh, province_outLine_mesh, provinceHeight = 20000;
 let city_marker,
   // 用于更改marker css样式
   marker_dom,
-  history_markers; // 存放历史 marker
+  history_markers = []; // 存放历史 marker
+let showHistoryMaker;
+
 initMarker();
 
 // 初始化一次
@@ -113,6 +111,7 @@ export const initChinaMap = async (dom, _vue) => {
 }
 
 let first = true;
+let willchangeScene = false;
 // 主函数 递归调用 无限循环
 async function runMain(_vue) {
   let allCityList = await getAllCityList();
@@ -122,77 +121,90 @@ async function runMain(_vue) {
   _vue.updateTime = fDate.now('YYYY.MM.DD &nbsp;&nbsp; HH:mm:ss') + '更新';
   // 循环三种数据类型场景
   for (let i = 0; i < sceneTypes.length; i++) {
+    willchangeScene = true;
+
     curType = sceneTypes[i];
     progressColor = pColor[i];
     themeTitle = tTitle[i];
     let curCityList = allCityList.find(v => v.dataType === curType.dataType);
-
+    // debugger
     console.log('curCityList', curCityList);
-
-    let cityList = curCityList.data;
+    // 
+    clearHistoryMarkers();
+    // 
     if(first) {
-      await sleep(8000);
+      await _initVue(_vue, curCityList);
     }
     // 更新类型
-    changeSceneType(_vue, cityList, {
+    changeSceneType(_vue, curCityList, {
       type: curType,
       color: themeColor[curType.dataType],
       progressColor,
       themeTitle,
     });
-    if (first) {
-      first = false;
-    } else {
+
+    if(!first) {
       await sleep(3000);
     }
-    
+
     // 循环城市列表
     let lastCity;
+    let cityList = curCityList.data;
     for (let j = 0; j < cityList.length; j++) {
       // debugger
       const curCity = cityList[j];
-      // console.log('curCity', curCity);
-
+      // 城市位置
+      const location = await getCityCenterByCode(curCity.areaCode);
+      // 省会位置 用于相机单位
+      const center = curCity.geojson.properties.center;
+      console.log('curCity', curCity, lastCity);
       if (!lastCity) {
-        await china2Province({
+        await china2Province(_vue, {
           zoom: curCity.geojson.properties.zoom,
-          adcode: curCity.geojson.properties.adcode,
-          name: curCity.geojson.properties.name,
-          center: curCity.geojson.properties.center,
-          location: curCity.geojson.properties.center,
+          adcode: curCity.parentCode,
+          name: curCity.areaName,
+          center: center,
+          location: location,
           offset: curCity.geojson.properties.offset
         })
       } else if (
-        curCity.geojson.properties.adcode.toString().substring(0, 2) ==
-        lastCity.properties.adcode.toString().substring(0, 2)
+        curCity.parentCode.toString().substring(0, 2) ==
+        lastCity.parentCode.toString().substring(0, 2)
       ) {
         // diff citycode 前两位是否变化判断切换逻辑， 变化则 需要先切换到全国再切换到省份
-        await city2city({
+        // debugger
+        await city2city(_vue, {
           maker: {
-            name: curCity.geojson.properties.name,
-            location: curCity.geojson.properties.center,
+            name: curCity.areaName,
+            location: location,
           }
-        })
-        sleep(3000);
+        });
+        await sleep(2000);
       } else {
         await sleep(1000);
+        // 
         await province2China({})
-
-        await sleep(3000);
-
-        await china2Province({
+        await sleep(2000);
+        // 
+        await china2Province(_vue, {
           zoom: curCity.geojson.properties.zoom,
-          adcode: curCity.geojson.properties.adcode,
-          name: curCity.geojson.properties.name,
-          center: curCity.geojson.properties.center,
-          location: curCity.geojson.properties.center,
+          adcode: curCity.parentCode,
+          name: curCity.areaName,
+          center: center,
+          location: location,
           offset: curCity.geojson.properties.offset
         })
 
         sleep(3000);
       }
-
       lastCity = cityList[j];
+
+      if (first) {
+        first = false;
+      }
+      if(willchangeScene) {
+        willchangeScene = false;
+      }
     }
     // 复位
     await sleep(1000);
@@ -204,6 +216,24 @@ async function runMain(_vue) {
   runMain(_vue);
 }
 
+async function _initVue(_vue, curCityList) {
+  _vue.curCityList = curCityList.data.map(v => {
+    const area = (+v.totalArea / 10e6);
+    return {
+      name: v.areaName,
+      area: +area.toFixed(2) == 0 ? +area.toFixed(3) : +area.toFixed(2),
+    }
+  });
+  await sleep(4500);
+  _vue.cityCount = +curCityList.count;
+  _vue.cityTotal = +curCityList.totalCount;
+  const percent = +(+curCityList.count / +curCityList.totalCount * 100).toFixed(0);
+  _vue.completedProgress = percent;
+  await sleep(200);
+  _vue.resetCityList = true;
+  await sleep(2000);
+  return Promise.resolve();
+}
 // 根据城市code/pos  => 获取省份 code => geojson => province_mesh  province_outLine_mesh
 export const addProvinceLayer = async ({
   adcode,
@@ -226,8 +256,9 @@ export const addProvinceLayer = async ({
     topColor: '#fff'
   }, material);
   province_outLine_mesh = new OutLine(province_mesh, {
-    interactive: false,
-    altitude: 1
+    // interactive: false,
+    // altitude: 1,
+    lineWidth: 2,
   }, lineMaterial, threeLayer);
 
   meshs.push(province_mesh);
@@ -253,27 +284,29 @@ export const addProvinceLayer = async ({
 }
 
 /*
-	cityList 所有城市列表信息 
+  vue,
+	cityList, 所有城市列表信息 
   to：{
-		pos 相机信息
-		marker: {lable, postion} 标注信息 label:string postion:geoPoint
-		color 边界颜色信息
-		code 区域码 用于查询 服务端数据，更新vue-data
-	}
+		
+	},
 */
 
 // 三种数据类型 循环切换， 分别对应三种主题色
-export const changeSceneType = async (_vue, cityList, {
+export const changeSceneType = async (_vue, curCityList, {
   color,
   progressColor,
   themeTitle
 }) => {
-  // console.log('changeSceneType', _vue, cityList, color, progressColor, themeTitle);
+  // clearHistoryMarker()
+
+  const cityList = curCityList.data;
+  console.log('changeSceneType');
 
   // update citymarker
-  const name = cityList[0].geojson.properties.name;
-  const location = cityList[0].geojson.properties.center;
-  updateCityMarker(name, location);
+  const name = cityList[0].areaName;
+  const location = await getCityCenterByCode(cityList[0].parentCode);
+  await updateCityMarker(name, location);
+
   // update css themeColor
   document.documentElement.style.setProperty('--themeColor', color);
 
@@ -283,38 +316,43 @@ export const changeSceneType = async (_vue, cityList, {
 
   // update VuePage
   // 右侧 数据类型滚动、覆盖率比例更新、城市列表更新
-  if (!first) {
+  if (!first && willchangeScene) {
     _vue.progressStartColor = progressColor.startColor;
     _vue.progressStopColor = progressColor.stopColor;
     _vue.swiperType.slideNext(1000, false);
   }
 
-  if (!first) {
+  if (!first && willchangeScene) {
     _vue.themeTitle = themeTitle;
     _vue.cityCount = 0;
-    _vue.cityTotal = 100;
-    _vue.cityPercent = 0;
+    _vue.cityTotal = +curCityList.totalCount;
     _vue.completedProgress = 0;
+
     await sleep(600);
-    _vue.cityCount = 50;
-    _vue.cityTotal = 100;
-    _vue.completedProgress = 50;
-    _vue.cityPercent = 50;
+    _vue.cityCount = +curCityList.count;
+    _vue.cityTotal = +curCityList.totalCount;
+    const percent = +(+curCityList.count / +curCityList.totalCount * 100).toFixed(0);
+    _vue.completedProgress = percent;
   }
  
   // 右下角城市渐变
-  if(!first) {
+  if(!first && willchangeScene) {
     _vue.cityStyle = _vue.fadeIn;
     await sleep(0);
     _vue.resetCityList = false;
     // 城市列表
-    _vue.curCityList = cityList;
+    _vue.curCityList = curCityList.data.map(v => {
+      const area = (+v.totalArea / 10e6);
+      return {
+        name: v.areaName,
+        area: +area.toFixed(2) == 0 ? +area.toFixed(3) : +area.toFixed(2),
+      }
+    });
     // 右下角城市渐变
     _vue.cityStyle = _vue.fadeOut;
     await sleep(0);
     _vue.resetCityList = true;
     await sleep(1000);
-    _vue.swiperCityList.slideNext(1000, false);
   }
 }
 // 
@@ -353,7 +391,7 @@ export const province2China = async (to) => {
   return Promise.resolve();
 }
 // 
-export const china2Province = async ({
+export const china2Province = async (_vue, {
   zoom,
   adcode,
   name,
@@ -361,7 +399,7 @@ export const china2Province = async ({
   offset,
   location
 }) => {
-  // console.log('china2Province', zoom, adcode, name, center, offset);
+  console.log('china2Province');
   map.animateTo({
     // center: [center[0] + 4, center[1] + 0.7],
     center: [center[0] + (offset ? offset[0] : 4), center[1] + (offset ? offset[1] : 0.7)],
@@ -372,7 +410,12 @@ export const china2Province = async ({
   });
   // 右侧城市 滚动
 
-  updateCityMarker(name, location)
+  if(!first && !willchangeScene) {
+    console.log('swiperCityList.slideNext')
+    _vue.swiperCityList.slideNext(1000, false);
+    // 
+    await updateCityMarker(name, location);
+  }
   // 
   marker_dom = document.querySelector('.city_marker');
   marker_dom.classList.add('big');
@@ -385,25 +428,32 @@ export const china2Province = async ({
   return Promise.resolve();
 }
 // 
-export const city2city = async ({
+export const city2city = async (_vue, {
   maker: {
     name,
     location
   }
 }) => {
-  // console.log('city2city', maker);
+  console.log('city2city', name, location);
   // 右侧城市 滚动
-
   await updateCityMarker(name, location);
-
+  _vue.swiperCityList.slideNext(1000, false);
+  await sleep(2000);
   return Promise.resolve();
 }
 
+// 
+function gen_history_marker(center) {
+  return new maptalks.ui.UIMarker(center, {
+    content: `<div class="history_marker"><span class="circle"></span><span class="circle1"></span><span class="circle2"></span></div>`
+  });
+}
 // 
 function initMarker() {
   city_marker = new maptalks.ui.UIMarker([0, 0], {
     'content': '<div class="city_marker"><div class="left"><span class="icon"></span><span class="circle1"></span><span class="circle2"></span></div><div class="right">北京市</div></div>'
   });
+  
   city_marker.updateMarkerText = function updateMarkerText(cityName) {
     const res = this.getContent().replace(/([\s\S]+<div class="right">)([\s\S]+)(<\/div><\/div>)/, (s, s1,
       s2, s3) => {
@@ -414,13 +464,16 @@ function initMarker() {
 }
 // 
 async function updateCityMarker(label, [lon, lat]) {
-  // console.log('updateCityMarker', label, [lon, lat]);
+  // debugger
+  console.log('updateCityMarker', label, [lon, lat]);
+  showHistoryMaker && showHistoryMaker();
   city_marker.updateMarkerText(label);
   // 更新位置
   const coord = new maptalks.Coordinate(lon, lat);
   city_marker.setCoordinates(coord);
-
-  return Promise.resolve()
+  showHistoryMaker = addHistoryMakers(city_marker);
+  await sleep(0)
+  return Promise.resolve();
 }
 
 // 初始化一次 添加 china_mesh  china_outLine_mesh
@@ -454,7 +507,8 @@ function initChinaLayer() {
     // china ouline mesh  // 添加一次  后面效果根据全局的 mesh对象 更改材质即可
     china_outLine_mesh = new OutLine(china_mesh, {
       interactive: false,
-      altitude: 1
+      // altitude: 1,
+      lineWidth: 5
     }, lineMaterial_china, threeLayer);
 
     meshs.push(china_outLine_mesh);
@@ -464,4 +518,22 @@ function initChinaLayer() {
   };
   threeLayer.addTo(map);
   threeLayer.config('animation', true);
+}
+async function clearHistoryMarkers() {
+  history_markers.forEach(v => v.remove());
+  history_markers = [];
+  showHistoryMaker = null;
+  await sleep(0);
+  return Promise.resolve();
+}
+function addHistoryMakers(city_marker) {
+  const old = {...city_marker};
+  console.log('old', city_marker, old);
+  const history_marker = gen_history_marker([old._markerCoord.x, old._markerCoord.y]);
+  history_markers.push(history_marker);
+  function show() {
+    history_marker.addTo(map).show();
+  }
+  show.history_markers = history_markers;
+  return show;
 }

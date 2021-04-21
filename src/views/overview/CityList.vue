@@ -24,7 +24,7 @@ export default {
         loop: true,
         slidesPerView: 5,
 				loopAdditionalSlides: 1,
-				height: 302
+				height: 300
       }
     };
   },
@@ -34,19 +34,17 @@ export default {
     }
   },
   mounted() {
-		console.log('dataList', this.dataList)
-    console.log("Current Swiper instance object", this.swiperCityList);
 		this.$emit('emitSwp', this.swiperCityList);
   },
 	destroyed() {
-		// this.swiperCityList.destroy();
+		this.swiperCityList.destroy();
 	}
 };
 </script>
 
 <style lang="less" scoped>
 .swp {
-	height: 300px;
+	height: 302px;
 	overflow: hidden;
   font-size: 24px;
   letter-spacing: 1.3px;
@@ -54,7 +52,7 @@ export default {
 	text-align: left;
 	.list {
 		.list-item {
-			height: 59px !important;
+			// height: 59px !important;
 			padding-bottom: 5px;
 			line-height: 33px;
 			box-sizing: border-box;

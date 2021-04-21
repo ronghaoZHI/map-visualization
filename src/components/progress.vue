@@ -15,7 +15,7 @@
                         :cx="gradient.cx"
                         :cy="gradient.cy"
                         :r="gradient.r">
-          <stop offset="30%" :stop-color="startColor"/>
+          <stop offset="0%" :stop-color="startColor"/>
           <stop offset="100%" :stop-color="stopColor"/>
         </radialGradient>
       </defs>

@@ -1,5 +1,8 @@
+/* eslint-disable */
 const maptalks = window.maptalks;
 const THREE = window.THREE;
+import { LineSegments2 } from './LineSegments2';
+
 export default class OutLine extends maptalks.BaseObject {
   constructor(mesh, options, material, layer) {
     options = maptalks.Util.extend({}, {
@@ -14,6 +17,8 @@ export default class OutLine extends maptalks.BaseObject {
 
     const edges = new THREE.EdgesGeometry(mesh.getObject3d().geometry, 1);
     const lineS = new THREE.LineSegments(edges, material);
+
+    // const lineS = new LineSegments2(edges, material);
     this._createGroup();
     this.getObject3d().add(lineS);
     //Initialize internal object3d

@@ -13,7 +13,7 @@ _axios.interceptors.request.use(
     // if (store && store.state.token) {
     //   config.headers.common['Authorization'] = config.headers.token = store.state.token || ''
     // }
-    config.headers.common['Authorization'] = '201800001';
+    // config.headers.common['Authorization'] = '201800001';
     config.headers["Content-Type"] = "application/json;charset=UTF-8";
     return config;
   },

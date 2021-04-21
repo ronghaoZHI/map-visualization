@@ -1067,7 +1067,7 @@ export const allProvince_geojson = {
     "type": "Feature",
     "properties": {
       "zoom": 5.8,
-      "offset": [9, 3.0],
+      "offset": [7, 3.0],
       "adcode": 150000,
       "name": "内蒙古自治区",
       "center": [111.670801, 40.818311],
@@ -6881,8 +6881,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
-      "zoom": 7.8,
-      "offset": [1, -1],
+      "zoom": 8.5,
+      "offset": [0, -1],
       "adcode": 460000,
       "name": "海南省",
       "center": [110.33119, 20.031971],
@@ -7111,7 +7111,7 @@ export const allProvince_geojson = {
     "type": "Feature",
     "properties": {
       "zoom": 7.6,
-      "offset": [4, 0.7],
+      "offset": [3.5, 0.7],
       "adcode": 500000,
       "name": "重庆市",
       "center": [106.504962, 29.533155],
