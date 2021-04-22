@@ -1,14 +1,17 @@
 /* eslint-disable */
+import _polygonToLine from '@turf/polygon-to-line';
 import DateTimeFormat from 'format-date-time';
 import {
   china_geojson
-} from '@/assets/data/china';
+} from '@/assets/data/china1';
 
 import OutLine from './three/Outline';
+
 import {
   getMeshPhongMaterial as _gmpm,
   getPolygonsByFeatures as _gpf,
   getLineMaterial as _glm,
+  getLineMaterial2 as _glm2,
   getFeaturesByCode as _gfc,
   sceneTypes,
   themeColor,
@@ -54,16 +57,29 @@ const chinaMeshColor = {
 let progressColor = pColor[0];
 let themeTitle = tTitle[0];
 const material = _gmpm(chinaMeshColor.black);
-const lineMaterial_china = _glm({
+const lineMaterial_china = _glm2({
   color: themeColor[curType.dataType],
-  opacity: 0.8
+  opacity: 0.8,
+  linewidth: 1,
 });
-const lineMaterial = _glm({
+// 宽度线
+const lineMaterial_province2 = _glm2({
+  color: themeColor[curType.dataType],
+  opacity: 1.0,
+  linewidth: 2,
+});
+// 1px 线
+const lineMaterial_province = _glm({
   color: themeColor[curType.dataType],
   opacity: 1.0
 });
-let china_mesh, china_outLine_mesh;
-let province_mesh, province_outLine_mesh, provinceHeight = 20000;
+// 
+let china_mesh, china_outLine_mesh, china_inline_mesh;
+let province_mesh, province_outLine_mesh,
+  province_outLine_mesh_buttom, 
+  province_outLine_mesh_height,
+  provinceHeight = 30000,
+  provinceMeshHeight = provinceHeight / 120;
 
 // 场景中维护一个全局 marker 即可
 let city_marker,
@@ -76,6 +92,7 @@ initMarker();
 
 // 初始化一次
 export const initChinaMap = async (dom, _vue) => {
+ 
   map = window.map = new maptalks.Map(dom, {
     center: chinaPos, // 初始化视角
     zoom: 4.54,
@@ -119,8 +136,9 @@ async function runMain(_vue) {
   // 更新服务端数据 拉取时间
   const fDate = new DateTimeFormat();
   _vue.updateTime = fDate.now('YYYY.MM.DD &nbsp;&nbsp; HH:mm:ss') + '更新';
-  console.log(allCityList.map(v => v.areaTotal));
-  _vue.areaTotalList = allCityList.map(v => +(+v.areaTotal / 10e6).toFixed());
+  // 更新数据量
+  _vue.areaTotalList = allCityList.map(v => (+v.areaTotal / 1e6).toFixed(0));
+
   // 循环三种数据类型场景
   for (let i = 0; i < sceneTypes.length; i++) {
     willchangeScene = true;
@@ -129,9 +147,7 @@ async function runMain(_vue) {
     progressColor = pColor[i];
     themeTitle = tTitle[i];
     let curCityList = allCityList.find(v => v.dataType === curType.dataType);
-    // debugger
-    console.log('curCityList', curCityList);
-    // 
+
     clearHistoryMarkers();
     // 
     if(first) {
@@ -159,7 +175,7 @@ async function runMain(_vue) {
       const location = await getCityCenterByCode(curCity.areaCode);
       // 省会位置 用于相机单位
       const center = curCity.geojson.properties.center;
-      console.log('curCity', curCity, lastCity);
+      // console.log('curCity', curCity, lastCity);
       if (!lastCity) {
         await china2Province(_vue, {
           zoom: curCity.geojson.properties.zoom,
@@ -221,7 +237,7 @@ async function runMain(_vue) {
 
 async function _initVue(_vue, curCityList) {
   _vue.curCityList = curCityList.data.map(v => {
-    const area = (+v.totalArea / 10e6);
+    const area = (+v.totalArea / 1e6);
     return {
       name: v.areaName,
       area: +area.toFixed(2) == 0 ? +area.toFixed(3) : +area.toFixed(2),
@@ -255,17 +271,42 @@ export const addProvinceLayer = async ({
 
   province_mesh = threeLayer.toExtrudePolygons(polygons_province, {
     interactive: false,
-    altitude: 1,
+    altitude: 1000,
     topColor: '#fff'
   }, material);
-  province_outLine_mesh = new OutLine(province_mesh, {
-    // interactive: false,
-    // altitude: 1,
-    lineWidth: 2,
-  }, lineMaterial, threeLayer);
+  
+  // mesh - fatLines
+  const geoLines = _polygonToLine(features[0]);
+  const lineStrings = maptalks.GeoJSON.toGeometry(geoLines);
+  province_outLine_mesh = threeLayer.toFatLines(lineStrings, {
+    interactive: false,
+    altitude: 1,
+  }, lineMaterial_province2);
 
+  province_outLine_mesh_buttom = threeLayer.toFatLines(lineStrings, {
+    interactive: false,
+    altitude: 1100,
+  }, lineMaterial_province2);
+
+  province_outLine_mesh_height = threeLayer.toFatLines(lineStrings, {
+    interactive: false,
+    altitude: 1100,
+    mode: 'height',
+    bottom: 0,
+    top: provinceMeshHeight,
+  }, lineMaterial_province2, threeLayer)
+
+  // mesh OutLine , lineWidth always 1px
+  // province_outLine_mesh = new OutLine(province_mesh, {
+  //   interactive: false,
+  //   lineWidth: 2,
+  // }, lineMaterial_province, threeLayer);
+
+  
   meshs.push(province_mesh);
   meshs.push(province_outLine_mesh);
+  meshs.push(province_outLine_mesh_buttom);
+  meshs.push(province_outLine_mesh_height);
 
   threeLayer.addMesh(meshs);
 
@@ -274,8 +315,14 @@ export const addProvinceLayer = async ({
     let time = 0;
     let timer = setInterval(() => {
       const scale = time / 40;
+      // 
       province_mesh.getObject3d().scale.z = scale;
-      province_outLine_mesh.getObject3d().scale.z = scale;
+      // province_outLine_mesh.getObject3d().scale.z = scale;
+      // 
+      province_outLine_mesh.setAltitude(provinceHeight * 1.1 * scale);
+      // 
+      province_outLine_mesh_height.getObject3d().scale.z = scale;
+
       if (++time >= 40) {
         clearInterval(timer);
       };
@@ -296,6 +343,7 @@ export const addProvinceLayer = async ({
 
 // 三种数据类型 循环切换， 分别对应三种主题色
 export const changeSceneType = async (_vue, curCityList, {
+  type,
   color,
   progressColor,
   themeTitle
@@ -303,7 +351,7 @@ export const changeSceneType = async (_vue, curCityList, {
   // clearHistoryMarker()
 
   const cityList = curCityList.data;
-  console.log('changeSceneType');
+  // console.log('changeSceneType');
 
   // update citymarker
   const name = cityList[0].areaName;
@@ -312,10 +360,15 @@ export const changeSceneType = async (_vue, curCityList, {
 
   // update css themeColor
   document.documentElement.style.setProperty('--themeColor', color);
+  // 
+  marker_dom = document.querySelector('.city_marker');
+  sceneTypes.forEach(v => marker_dom.classList.remove(v.dataType));
+  marker_dom.classList.add(type.dataType);
 
-  // update material
-  lineMaterial.color.setStyle(color);
+  // update material color
   lineMaterial_china.color.setStyle(color);
+  lineMaterial_province.color.setStyle(color);
+  lineMaterial_province2.color.setStyle(color);
 
   // update VuePage
   // 右侧 数据类型滚动、覆盖率比例更新、城市列表更新
@@ -345,7 +398,7 @@ export const changeSceneType = async (_vue, curCityList, {
     _vue.resetCityList = false;
     // 城市列表
     _vue.curCityList = curCityList.data.map(v => {
-      const area = (+v.totalArea / 10e6);
+      const area = (+v.totalArea / 1e6);
       return {
         name: v.areaName,
         area: +area.toFixed(2) == 0 ? +area.toFixed(3) : +area.toFixed(2),
@@ -359,38 +412,58 @@ export const changeSceneType = async (_vue, curCityList, {
   }
 }
 // 
-export const province2China = async (to) => {
-  // console.log('province2China', to);
+export const province2China = async ({}) => {
+  // console.log('province2China');
+  // mesh 渐变下降
   {
     let time = 0;
     let timer = setInterval(() => {
+      // 
       const scale = 1 - time / 40;
       province_mesh.getObject3d().scale.z = scale;
-      province_outLine_mesh.getObject3d().scale.z = scale;
+      // 
+      // province_outLine_mesh.getObject3d().scale.z = scale;
+      // 
+      province_outLine_mesh.setAltitude(provinceHeight * 1.1 * scale);
+      // 
+      province_outLine_mesh_height.getObject3d().scale.z = scale;
+
       if (++time >= 40) {
         clearInterval(timer);
         threeLayer.removeMesh(province_mesh);
         threeLayer.removeMesh(province_outLine_mesh);
+        threeLayer.removeMesh(province_outLine_mesh_buttom);
+        threeLayer.removeMesh(province_outLine_mesh_height);
       };
     }, 50);
+  };
+
+  await sleep(2000);
+  
+  // 更新图层透明效果
+  {
+    let time = 0;
+    let timer = setInterval(() => {
+      aisaImageLayer.setOpacity(time / 10);
+      if (++time >= 10) {
+        clearInterval(timer);
+      }
+    }, 100);
   }
 
-  // mesh 渐变下降
-  setTimeout(_ => {
-    map.animateTo({
-      center: chinaPos,
-      zoom: 4.54,
-      bearing: 0,
-      pitch: 0,
-    }, {
-      duration: 1000
-    });
-    // 
-    marker_dom = document.querySelector('.city_marker');
-    marker_dom.classList.remove('big');
-  }, 2000);
- 
-  await sleep(2000);
+  map.animateTo({
+    center: chinaPos,
+    zoom: 4.54,
+    bearing: 0,
+    pitch: 0,
+  }, {
+    duration: 1500
+  });
+  // 
+  marker_dom = document.querySelector('.city_marker');
+  marker_dom.classList.remove('big');
+  // 
+  await sleep(2500);
   return Promise.resolve();
 }
 // 
@@ -402,7 +475,7 @@ export const china2Province = async (_vue, {
   offset,
   location
 }) => {
-  console.log('china2Province');
+  // console.log('china2Province');
   map.animateTo({
     // center: [center[0] + 4, center[1] + 0.7],
     center: [center[0] + (offset ? offset[0] : 4), center[1] + (offset ? offset[1] : 0.7)],
@@ -411,10 +484,21 @@ export const china2Province = async (_vue, {
   }, {
     duration: 1500
   });
-  // 右侧城市 滚动
-
+  
+  // 更新图层透明效果
+  setTimeout(() => {
+    let time = 0;
+    let timer = setInterval(() => {
+      aisaImageLayer.setOpacity( 1 - (time / 10));
+      if (++time >= 10) {
+        clearInterval(timer);
+      }
+    }, 100);
+  }, 500);
+   
   if(!first && !willchangeScene) {
-    console.log('swiperCityList.slideNext')
+    // 右侧城市 滚动
+    // console.log('swiperCityList.slideNext')
     _vue.swiperCityList.slideNext(1000, false);
     // 
     await updateCityMarker(name, location);
@@ -422,7 +506,7 @@ export const china2Province = async (_vue, {
   // 
   marker_dom = document.querySelector('.city_marker');
   marker_dom.classList.add('big');
-
+  // 
   await addProvinceLayer({
     adcode,
     name
@@ -437,11 +521,13 @@ export const city2city = async (_vue, {
     location
   }
 }) => {
-  console.log('city2city', name, location);
+  // console.log('city2city', name, location);
   // 右侧城市 滚动
   await updateCityMarker(name, location);
+  // 
   marker_dom = document.querySelector('.city_marker');
   marker_dom.classList.add('big');
+  // 
   _vue.swiperCityList.slideNext(1000, false);
   await sleep(3000);
   return Promise.resolve();
@@ -460,17 +546,19 @@ function initMarker() {
   });
   
   city_marker.updateMarkerText = function updateMarkerText(cityName) {
-    const res = this.getContent().replace(/([\s\S]+<div class="right">)([\s\S]+)(<\/div><\/div>)/, (s, s1,
-      s2, s3) => {
-      return s1 + cityName + s3;
-    });
+    marker_dom = document.querySelector('.city_marker');
+    const res = marker_dom.outerHTML.replace(
+      /([\s\S]+<div class="right">)([\s\S]+)(<\/div><\/div>)/, 
+      (s, s1,s2, s3) => {
+        return s1 + cityName + s3;
+      }
+    );
     this.setContent(res);
   };
 }
 // 
 async function updateCityMarker(label, [lon, lat]) {
   // debugger
-  console.log('updateCityMarker', label, [lon, lat]);
   showHistoryMaker && showHistoryMaker();
   city_marker.updateMarkerText(label);
   // 更新位置
@@ -486,9 +574,10 @@ function initChinaLayer() {
   // the ThreeLayer to draw buildings
   threeLayer = new maptalks.ThreeLayer('t1', {
     forceRenderOnMoving: true,
-    forceRenderOnRotating: true
+    forceRenderOnRotating: true,
+    forceRenderOnZooming: true,
   });
-
+  animation();
   var meshs = [];
 
   threeLayer.prepareToDraw = function(gl, scene, camera) {
@@ -510,16 +599,23 @@ function initChinaLayer() {
     meshs.push(china_mesh);
 
     // china ouline mesh  // 添加一次  后面效果根据全局的 mesh对象 更改材质即可
-    china_outLine_mesh = new OutLine(china_mesh, {
+
+    const geoLines = _polygonToLine(china_features[0]);
+    const lineStrings = maptalks.GeoJSON.toGeometry(geoLines);
+    china_outLine_mesh = threeLayer.toFatLines(lineStrings, {
       interactive: false,
-      // altitude: 1,
-      lineWidth: 5
-    }, lineMaterial_china, threeLayer);
+    }, lineMaterial_china);
+
+    // china_outLine_mesh = new OutLine(china_mesh, {
+    //   interactive: false,
+    //   // altitude: 1,
+    //   lineWidth: 5
+    // }, lineMaterial_china, threeLayer);
 
     meshs.push(china_outLine_mesh);
     // 
     threeLayer.addMesh(meshs);
-    // animation();
+    // debugger
   };
   threeLayer.addTo(map);
   threeLayer.config('animation', true);
@@ -533,7 +629,6 @@ async function clearHistoryMarkers() {
 }
 function addHistoryMakers(city_marker) {
   const old = {...city_marker};
-  console.log('old', city_marker, old);
   const history_marker = gen_history_marker([old._markerCoord.x, old._markerCoord.y]);
   history_markers.push(history_marker);
   function show() {
@@ -541,4 +636,13 @@ function addHistoryMakers(city_marker) {
   }
   show.history_markers = history_markers;
   return show;
+}
+function animation() {
+  // layer animation support Skipping frames
+  threeLayer._needsUpdate = !threeLayer._needsUpdate;
+  if (threeLayer._needsUpdate) {
+      threeLayer.renderScene();
+      // map._renderer()
+  }
+  requestAnimationFrame(animation);
 }

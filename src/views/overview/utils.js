@@ -20,11 +20,11 @@ export const getMeshPhongMaterial = (color) => {
 }
 
 // 
-export const getLineMaterial = ({color = '#7172FF', opacity = 1.0}) => {
+export const getLineMaterial = ({color = '#7172FF', opacity = 1.0, linewidth = 1}) => {
   const lineMaterial = new THREE.LineBasicMaterial({
     color, // 线的颜色
     transparent: true,
-    linewidth: 10,
+    linewidth,
     opacity,
     depthTest: true,
   });
@@ -36,9 +36,25 @@ export const getLineMaterial = ({color = '#7172FF', opacity = 1.0}) => {
 
   return lineMaterial;
 }
-
 // 
-export const getPolygonsByFeatures = (features, height = 10) => {
+export const getLineMaterial2 = ({color = '#7172FF', opacity = 1.0, linewidth = 3}) => {
+  const lineMaterial = new THREE.LineMaterial({
+    color, // 线的颜色
+    transparent: true,
+    linewidth,
+    opacity,
+    // depthTest: true,
+  });
+  //解决z-flighting
+  // lineMaterial.polygonOffset = true;
+  // lineMaterial.depthTest = true;
+  // lineMaterial.polygonOffsetFactor = 1;
+  // lineMaterial.polygonOffsetUnits = 1.0;
+
+  return lineMaterial;
+}
+// 
+export const getPolygonsByFeatures = (features, height = 0) => {
   const polygons = features.map(f => {
     const polygon = maptalks.GeoJSON.toGeometry(f);
     polygon.setProperties({
@@ -87,11 +103,23 @@ export const sceneTypes = Object.keys(themeColor).map((v, i) => {
   }
 });
 // 
-export const directlyCity = ['北京市', '天津市', '上海市', '重庆市'];
+export const directlyCity = [{
+  adcode: 110000,
+  name: '北京市',
+}, { 
+  adcode: 120000,
+  name: '天津市',
+}, {
+  adcode: 310000,
+  nmae: '上海市',
+}, {
+  adcode: 500000,
+  name: '重庆市',
+}];
 // 
 import {
   allProvince_geojson
-} from '@/assets/data/province';
+} from '@/assets/data/province1';
 
 export const getFeaturesByCode = (adcode, name) => 
   [allProvince_geojson.features.find(v => 
@@ -148,7 +176,6 @@ export const getAllCityList = async () => {
     console.error(error);   
   }
 
-  console.log(result);
   return Promise.resolve(result);
 }
 
@@ -156,12 +183,12 @@ export const getCityCenterByCode = async (code) => {
   return new Promise((res, rej) => {
     _districtService.search(code, (status, result) => {
       if(status === 'complete') {
-        console.log(code, result);
+        // console.log(code, result);
         const r = result.districtList[0];
         res([r.center.lng, r.center.lat]);
       } else {
         rej(result);
       }
-    })
-  })
+    });
+  });
 }

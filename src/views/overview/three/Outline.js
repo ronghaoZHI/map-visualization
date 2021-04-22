@@ -1,7 +1,6 @@
 /* eslint-disable */
 const maptalks = window.maptalks;
 const THREE = window.THREE;
-// import { LineSegments2 } from './LineSegments2';
 
 export default class OutLine extends maptalks.BaseObject {
   constructor(mesh, options, material, layer) {

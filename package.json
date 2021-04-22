@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@turf/polygon-to-line": "^6.3.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "format-date-time": "^0.3.3",

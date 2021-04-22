@@ -404,49 +404,68 @@ export default {
   z-index: 1;
   position: relative;
   .circle {
-    width: 12px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     background: var(--themeColor);
     border-radius: 50%;
     position: relative;
-    top: 2px;
+    top: 0px;
   }
   .circle1 {
     width: 20px;
-    height: 10px;
+    height: 20px;
     background: transparent;
     border: 1px solid var(--themeColor);
     border-radius: 50%;
-    animation: scale 1.4s linear 0.7s infinite;
+    animation: _scale1 1.4s linear 0.7s infinite;
     position: relative;
-    top: -8px;
+    top: -15px;
   }
 
   .circle2 {
     width: 20px;
-    height: 10px;
+    height: 20px;
     border: 1px solid var(--themeColor);
     border-radius: 50%;
     background: transparent;
     position: relative;
-    top: -20px;
-    animation: _scale 1.4s linear infinite;
+    top: -36px;
+    animation: _scale2 1.4s linear infinite;
   }
-  @keyframes _scale {
+  @keyframes _scale1 {
     0% {
-      transform: scale3d(0, 0, 0);
+      transform: scale3d(0, 0, 1);
       border-color: var(--themeColor);
       opacity: 1;
     }
     90% {
-      transform: scale3d(1.6, 1.6, 1.6) translateY(4px);
+      transform: scale3d(1.6, 1.6, 1) ;
       border-color: var(--themeColor);
       opacity: 0.2;
     }
     100% {
-      transform: scale3d(1.7, 1.7, 1.7) translateY(4px);
+      transform: scale3d(1.6, 1.6, 1) ;
       border-color: var(--themeColor);
       opacity: 0;
+    }
+  }
+  @keyframes _scale2 {
+    0% {
+      transform: scale3d(0, 0, 1);
+      border-color: var(--themeColor);
+      opacity: 1;
+    }
+    90% {
+      transform: scale3d(1.6, 1.6, 1);
+      border-color: var(--themeColor);
+      opacity: 0.2;
+      top: -37px;
+    }
+    100% {
+      transform: scale3d(1.6, 1.6, 1);
+      border-color: var(--themeColor);
+      opacity: 0;
+      top: -37px;
     }
   }
 }
@@ -473,10 +492,10 @@ export default {
     .icon {
       width: 18px;
       height: 24px;
-      color: #000;
-      background: url(../../assets/imgs/poi.svg) no-repeat;
+      margin-left: 1px;
       background-size: 100%;
-      /* animation: poi .8s linear infinite; */
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     .circle1 {
@@ -499,6 +518,22 @@ export default {
       position: relative;
       top: -22px;
       animation: scale 1.4s linear infinite;
+    }
+  }
+
+  &.data_map3d {
+    .left .icon {
+      background-image: url(../../assets/imgs/poi.png);
+    }
+  }
+  &.data_capture {
+    .left .icon {
+      background-image: url(../../assets/imgs/poi-1.png);
+    }
+  }
+  &.data_3d {
+    .left .icon {
+      background-image: url(../../assets/imgs/poi-2.png);
     }
   }
 
@@ -544,9 +579,6 @@ export default {
 .cityfade-leave-active {
   animation: fade_in 2s ease;
 }
-
-
-
 
 @keyframes fade_out {
   0% {

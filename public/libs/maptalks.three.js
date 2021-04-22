@@ -1,5 +1,5 @@
 /*!
- * maptalks.three v0.15.2
+ * maptalks.three v0.16.0
  * LICENSE : MIT
  * (c) 2016-2021 maptalks.org
  */
@@ -384,6 +384,22 @@
     LineGeometry.prototype = Object.assign(Object.create(LineSegmentsGeometry.prototype), {
         constructor: LineGeometry,
         isLineGeometry: true,
+        setPositionsByHeight: function (array, bottom, top) {
+            var length = array.length ;
+            var points = new Float32Array(  length * 2 );
+            for ( var i = 0; i < length; i += 3 ) {
+    
+                points[ 2*i ] = array[ i ];
+                points[ 2*i + 1 ] = array[ i + 1 ];
+                points[ 2*i + 2 ] = array[ i + 2 ]+bottom;
+    
+                points[ 2*i +3] = array[ i ];
+                points[ 2*i + 4 ] = array[ i + 1 ];
+                points[ 2*i + 5 ] = array[ i + 2  ]+top;
+            }
+            LineSegmentsGeometry.prototype.setPositions.call( this, points );
+            return this;
+        },
         // setPositions: function (array) {
         //     // converts [ x1, y1, z1,  x2, y2, z2, ... ] to pairs format
         //     var length = array.length - 3;
@@ -6581,7 +6597,12 @@
             _this = _super.call(this) || this;
             _this._initOptions(options);
             var geometry = new LineGeometry();
-            geometry.setPositions(ps);
+            if (!options.mode) {
+                geometry.setPositions(ps);
+            }
+            else if (options.mode == 'height') {
+                geometry.setPositionsByHeight(ps, options.bottom || 0, options.top || 1);
+            }
             _this._setMaterialRes(layer, material);
             _this._createLine2(geometry, material);
             var altitude = options.altitude;
@@ -7704,9 +7725,6 @@
                 var parent = mesh['__parent'];
                 if (parent && parent.getOptions) {
                     var baseObject = parent;
-                    if (baseObject.zoomChange && maptalks.Util.isFunction(baseObject.zoomChange)) {
-                        baseObject.zoomChange(zoom);
-                    }
                     var minZoom = baseObject.getMinZoom(), maxZoom = baseObject.getMaxZoom();
                     if (zoom < minZoom || zoom > maxZoom) {
                         if (baseObject.isVisible()) {
@@ -7947,7 +7965,6 @@
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-    typeof console !== 'undefined' && console.log('maptalks.three v0.15.2, requires maptalks@>=0.39.0.');
+    typeof console !== 'undefined' && console.log('maptalks.three v0.16.0, requires maptalks@>=0.39.0.');
 
 })));
-//# sourceMappingURL=maptalks.three.js.map
