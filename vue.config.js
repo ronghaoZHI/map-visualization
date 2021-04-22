@@ -12,7 +12,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://tassets.data.airlook.com',
+        target: 'http://tdata.airlook.com',
         ws: true,
         changeOrigin: true
       },
