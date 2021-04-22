@@ -20,7 +20,7 @@ export const getMeshPhongMaterial = (color) => {
 }
 
 // 
-export const getLineMaterial = ({color = '#7172FF', opacity}) => {
+export const getLineMaterial = ({color = '#7172FF', opacity = 1.0}) => {
   const lineMaterial = new THREE.LineBasicMaterial({
     color, // 线的颜色
     transparent: true,
@@ -104,12 +104,18 @@ export const sleep = (time) => {
   });
 };
 
-import { getCityCount, getCityList } from '../../api/index';
+import { getCityCount, getCityList, getAllDataArea } from '../../api/index';
 
 export const getAllCityList = async () => {
   const len = sceneTypes.length;
   const cityLists = sceneTypes.map(v => getCityList({ dataType: v.id }));
   const cityCounts = sceneTypes.map(v => getCityCount({ dataType: v.id }));
+  const { data: allDataArea } = await getAllDataArea();
+  const areaTotals = [
+    allDataArea.publishedMapArea.totalArea,
+    allDataArea.originalArea.totalArea,
+    allDataArea.outcome3DArea.totalArea,
+  ]
   let res = [];
   let result = [];
   try {
@@ -122,6 +128,7 @@ export const getAllCityList = async () => {
     });
     result = res.slice(len).map((v, i) => {
       return {
+        areaTotal: areaTotals[i],
         data: result[i].data ,
         ...v.data,
         dataType: sceneTypes[i].dataType

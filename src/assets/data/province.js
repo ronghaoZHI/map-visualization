@@ -3432,8 +3432,8 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
-      "zoom": 8.5,
-      "offset": [1, 0],
+      "zoom": 9.5,
+      "offset": [0, 0],
       "adcode": 310000,
       "name": "上海市",
       "center": [121.472644, 31.231706],

@@ -7,15 +7,16 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
     <link rel="stylesheet" href="<%= BASE_URL %>libs/maptalks.css">
-    <script src="<%= BASE_URL %>libs/maptalks.js"></script>
-    <script src="<%= BASE_URL %>libs/three.js"></script>
-    <script src="<%= BASE_URL %>libs/maptalks.three.js"></script>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
+    <script src="<%= BASE_URL %>libs/maptalks.js"></script>
+    <script src="<%= BASE_URL %>libs/three.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/three@0.104.0/examples/js/lines/LineMaterial.js"></script> -->
+    <script src="<%= BASE_URL %>libs/maptalks.three.js"></script>
     <script src="https://webapi.amap.com/maps?v=1.4.15&key=c7d659fa3af576ff616c001d4846b469&plugin=AMap.DistrictSearch"></script>
     <!-- built files will be auto injected -->
   </body>

@@ -119,6 +119,8 @@ async function runMain(_vue) {
   // 更新服务端数据 拉取时间
   const fDate = new DateTimeFormat();
   _vue.updateTime = fDate.now('YYYY.MM.DD &nbsp;&nbsp; HH:mm:ss') + '更新';
+  console.log(allCityList.map(v => v.areaTotal));
+  _vue.areaTotalList = allCityList.map(v => +(+v.areaTotal / 10e6).toFixed());
   // 循环三种数据类型场景
   for (let i = 0; i < sceneTypes.length; i++) {
     willchangeScene = true;
@@ -173,13 +175,14 @@ async function runMain(_vue) {
       ) {
         // diff citycode 前两位是否变化判断切换逻辑， 变化则 需要先切换到全国再切换到省份
         // debugger
+        await sleep(2000);
         await city2city(_vue, {
           maker: {
             name: curCity.areaName,
             location: location,
           }
         });
-        await sleep(2000);
+        // await sleep(3000);
       } else {
         await sleep(1000);
         // 
@@ -437,8 +440,10 @@ export const city2city = async (_vue, {
   console.log('city2city', name, location);
   // 右侧城市 滚动
   await updateCityMarker(name, location);
+  marker_dom = document.querySelector('.city_marker');
+  marker_dom.classList.add('big');
   _vue.swiperCityList.slideNext(1000, false);
-  await sleep(2000);
+  await sleep(3000);
   return Promise.resolve();
 }
 

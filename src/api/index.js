@@ -7,3 +7,6 @@ export const getCityList = params => axios.get('/api/datacapsule/statistics/over
 
 // 查询地级市总的数量/有数据的地级市数量
 export const getCityCount = params => axios.get('/api/datacapsule/statistics/overview/cityCount',{ params });
+
+// 查询所有类型数据面积
+export const getAllDataArea = params  =>axios.get('/api/datacapsule/statistics/overview/allDataArea', { params });

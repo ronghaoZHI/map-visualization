@@ -24,15 +24,7 @@
               <div>
                 <span class="title">AirlookMap地图面积</span>
                 <span class="number"
-                  ><span class="num">{{ 1234.12 }}</span> km²</span
-                >
-              </div>
-            </swiper-slide>
-            <swiper-slide class="data-type">
-              <div>
-                <span class="title">三维数据生产面积</span>
-                <span class="number"
-                  ><span class="num">{{ 1213.12 }}</span> km²</span
+                  ><span class="num">{{ areaTotalList[0] || 0 }}</span> km²</span
                 >
               </div>
             </swiper-slide>
@@ -40,10 +32,19 @@
               <div>
                 <span class="title">数据采集面积</span>
                 <span class="number"
-                  ><span class="num">{{ 1203.12 }}</span> km²</span
+                  ><span class="num">{{ areaTotalList[1] || 0 }}</span> km²</span
                 >
               </div>
             </swiper-slide>
+            <swiper-slide class="data-type">
+              <div>
+                <span class="title">三维数据生产面积</span>
+                <span class="number"
+                  ><span class="num">{{ areaTotalList[2] || 0 }}</span> km²</span
+                >
+              </div>
+            </swiper-slide>
+           
           </swiper>
         </section>
         <section class="middle">
@@ -121,6 +122,7 @@ export default {
       progressStopColor: progressColor[0].stopColor,
       cityCount: 0,
       cityTotal: 0,
+      areaTotalList: [],
       completedProgress: 0,
       curCityList: [],
       swiperTypeOpt: {
@@ -471,7 +473,8 @@ export default {
     .icon {
       width: 18px;
       height: 24px;
-      background: url(../../assets/imgs/poi.png) no-repeat;
+      color: #000;
+      background: url(../../assets/imgs/poi.svg) no-repeat;
       background-size: 100%;
       /* animation: poi .8s linear infinite; */
     }
