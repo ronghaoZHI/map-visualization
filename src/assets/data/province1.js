@@ -7858,7 +7858,7 @@ export const allProvince_geojson = {
     "type": "Feature",
     "properties": {
 			"zoom": 7,
-      "offset": [4, -1.5],
+      "offset": [3.2, -1.5],
       "adcode": "330000",
       "name": "浙江省",
       "center": [120.153576, 30.287459],
