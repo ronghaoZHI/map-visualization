@@ -406,7 +406,7 @@ export default {
   background-image: url(../../assets/imgs/chinaS.png);
   background-size: 100%;
   background-repeat: no-repeat;
-  transition: opacity .5s ease-out;
+  transition: opacity .2s ease-out;
 }
 </style>
 
