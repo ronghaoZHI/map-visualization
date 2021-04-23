@@ -96,6 +96,8 @@
         </section>
       </div>
     </div>
+    <div :style="{ 'opacity': showSouthImage ? 1 : 0 }" class="side-image">
+    </div>
   </div>
 </template>
 
@@ -114,6 +116,7 @@ export default {
   },
   data() {
     return {
+      showSouthImage: true,
       updateTime: undefined,
       swiperCityList: undefined,
       resetCityList: false,
@@ -392,6 +395,18 @@ export default {
       padding-top: 10px;
     }
   }
+}
+
+.side-image {
+  position: absolute;
+  left: 55vw;
+  top: 71vh;
+  height: 230px;
+  width: 152px;
+  background-image: url(../../assets/imgs/chinaS.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  transition: opacity .5s ease-out;
 }
 </style>
 

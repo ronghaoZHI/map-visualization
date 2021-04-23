@@ -211,7 +211,7 @@ async function runMain(_vue) {
       } else {
         await sleep(1000);
         // 
-        await province2China({})
+        await province2China(_vue, {})
         await sleep(2000);
         // 
         await china2Province(_vue, {
@@ -236,7 +236,7 @@ async function runMain(_vue) {
     }
     // 复位
     await sleep(1000);
-    await province2China({});
+    await province2China(_vue, {});
     await sleep(500);
   }
 
@@ -422,7 +422,7 @@ export const changeSceneType = async (_vue, curCityList, {
   }
 }
 // 
-export const province2China = async ({}) => {
+export const province2China = async (_vue, {}) => {
   // console.log('province2China');
   // mesh 渐变下降
   {
@@ -481,8 +481,11 @@ export const province2China = async ({}) => {
   // 边界呈现
   lineMaterial_china.linewidth = 2;
   lineMaterial_province_outline.linewidth = 1;
- 
-  await sleep(2500);
+  
+  await sleep(1500);
+  _vue.showSouthImage = true;
+  await sleep(1000);
+  
   return Promise.resolve();
 }
 // 
@@ -503,7 +506,8 @@ export const china2Province = async (_vue, {
   }, {
     duration: 1500
   });
-
+  // 
+  _vue.showSouthImage = false;
   // 边界消失
   setTimeout(() => {
     lineMaterial_china.linewidth = 0;
@@ -535,7 +539,6 @@ export const china2Province = async (_vue, {
     adcode,
     name
   });
-
   return Promise.resolve();
 }
 // 
