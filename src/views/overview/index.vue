@@ -403,6 +403,8 @@ export default {
   align-items: center;
   z-index: 1;
   position: relative;
+  will-change: auto;
+  top: 20px;
   .circle {
     width: 8px;
     height: 8px;
@@ -474,12 +476,21 @@ export default {
   color: aqua;
   display: flex;
   transition: all 0.5s ease;
-  transform: translate3d(20px, 0px, 0) scale3d(1, 1, 1);
+  will-change: auto;
+  transition: transform 1s 0.5s;
+  transform: translate3d(20px, 0, 0) scale3d(1, 1, 1);
 
   &.big {
     font-size: 34px;
-    transform: translate3d(40px, 0px, 0) scale3d(1.5, 1.5, 1.5);
+    transform: translate3d(20px, 0, 0) scale3d(1.5, 1.5, 1);
   }
+  // &.paused {
+  //   .left {
+  //     .circle1, .circle2 {
+  //       animation-play-state: paused;
+  //     }
+  //   }
+  // }
 
   .left {
     width: 44px;

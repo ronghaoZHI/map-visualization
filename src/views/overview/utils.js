@@ -23,7 +23,7 @@ export const getMeshPhongMaterial = (color) => {
 export const getLineMaterial = ({color = '#7172FF', opacity = 1.0, linewidth = 1}) => {
   const lineMaterial = new THREE.LineBasicMaterial({
     color, // 线的颜色
-    transparent: true,
+    transparent: false,
     linewidth,
     opacity,
     depthTest: true,
@@ -40,14 +40,14 @@ export const getLineMaterial = ({color = '#7172FF', opacity = 1.0, linewidth = 1
 export const getLineMaterial2 = ({color = '#7172FF', opacity = 1.0, linewidth = 3}) => {
   const lineMaterial = new THREE.LineMaterial({
     color, // 线的颜色
-    transparent: true,
+    transparent: false,
     linewidth,
     opacity,
     // depthTest: true,
   });
   //解决z-flighting
   // lineMaterial.polygonOffset = true;
-  // lineMaterial.depthTest = true;
+  lineMaterial.depthTest = true;
   // lineMaterial.polygonOffsetFactor = 1;
   // lineMaterial.polygonOffsetUnits = 1.0;
 
@@ -103,19 +103,21 @@ export const sceneTypes = Object.keys(themeColor).map((v, i) => {
   }
 });
 // 
-export const directlyCity = [{
-  adcode: 110000,
-  name: '北京市',
-}, { 
-  adcode: 120000,
-  name: '天津市',
-}, {
-  adcode: 310000,
-  nmae: '上海市',
-}, {
-  adcode: 500000,
-  name: '重庆市',
-}];
+export const directlyCity = [
+  {
+    adcode: 110000,
+    name: '北京市',
+  }, { 
+    adcode: 120000,
+    name: '天津市',
+  }, {
+    adcode: 310000,
+    nmae: '上海市',
+  }, {
+    adcode: 500000,
+    name: '重庆市',
+  }
+];
 // 
 import {
   allProvince_geojson
@@ -126,6 +128,9 @@ export const getFeaturesByCode = (adcode, name) =>
     (v.properties.adcode == adcode || v.properties.name == name)
   )];
 //
+export const getAllProvinceFeatures = () => 
+  allProvince_geojson.features;
+// 
 export const sleep = (time) => {
   return new Promise(res => {
     setTimeout(res, time);

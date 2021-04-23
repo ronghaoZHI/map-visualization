@@ -6564,10 +6564,15 @@
                     psCount += (positionsV.length * 2 - 2);
                     for (var j = 0, len1 = positionsV.length; j < len1; j++) {
                         var v_1 = positionsV[j];
-                        if (j > 0 && j < len1 - 1) {
+                        if (!options.mode) {
+                            if (j > 0 && j < len1 - 1) {
+                                ps.push(v_1.x, v_1.y, v_1.z);
+                            }
                             ps.push(v_1.x, v_1.y, v_1.z);
+                        } else if (options.mode == 'height') {
+                            ps.push(v_1.x, v_1.y, v_1.z + options.bottom);
+                            ps.push(v_1.x, v_1.y, v_1.z + options.top);
                         }
-                        ps.push(v_1.x, v_1.y, v_1.z);
                     }
                 }
                 // const psCount = positionsV.length + positionsV.length - 2;
@@ -6597,12 +6602,7 @@
             _this = _super.call(this) || this;
             _this._initOptions(options);
             var geometry = new LineGeometry();
-            if (!options.mode) {
-                geometry.setPositions(ps);
-            }
-            else if (options.mode == 'height') {
-                geometry.setPositionsByHeight(ps, options.bottom || 0, options.top || 1);
-            }
+            geometry.setPositions(ps);
             _this._setMaterialRes(layer, material);
             _this._createLine2(geometry, material);
             var altitude = options.altitude;
