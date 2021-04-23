@@ -249,7 +249,9 @@ async function _initVue(_vue, curCityList) {
       area: +area.toFixed(2) == 0 ? +area.toFixed(3) : +area.toFixed(2),
     }
   });
-  await sleep(4500);
+  await sleep(3000);
+  _vue.showNumber = true;
+  await sleep(1500);
   _vue.cityCount = +curCityList.count;
   _vue.cityTotal = +curCityList.totalCount;
   const percent = +(+curCityList.count / +curCityList.totalCount * 100).toFixed(0);

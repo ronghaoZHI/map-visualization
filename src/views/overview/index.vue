@@ -23,7 +23,7 @@
             <swiper-slide class="data-type">
               <div>
                 <span class="title">AirlookMap地图面积</span>
-                <span class="number"
+                <span :style="{ 'opacity': showNumber ? 1 : 0 }" class="number"
                   ><span class="num">{{ areaTotalList[0] || 0 }}</span> km²</span
                 >
               </div>
@@ -31,7 +31,7 @@
             <swiper-slide class="data-type">
               <div>
                 <span class="title">数据采集面积</span>
-                <span class="number"
+                <span :style="{ 'opacity': showNumber ? 1 : 0 }" class="number"
                   ><span class="num">{{ areaTotalList[1] || 0 }}</span> km²</span
                 >
               </div>
@@ -39,7 +39,7 @@
             <swiper-slide class="data-type">
               <div>
                 <span class="title">三维数据生产面积</span>
-                <span class="number"
+                <span :style="{ 'opacity': showNumber ? 1 : 0 }" class="number"
                   ><span class="num">{{ areaTotalList[2] || 0 }}</span> km²</span
                 >
               </div>
@@ -116,6 +116,7 @@ export default {
   },
   data() {
     return {
+      showNumber: false,
       showSouthImage: true,
       updateTime: undefined,
       swiperCityList: undefined,
@@ -298,6 +299,7 @@ export default {
         font-size: 14px;
       }
       .number {
+        transition: opacity .5s ease-in;
         font-size: 18px;
         margin-top: 4px;
       }
