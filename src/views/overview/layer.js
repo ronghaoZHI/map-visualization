@@ -4,11 +4,8 @@ import DateTimeFormat from 'format-date-time';
 import {
   china_geojson
 } from '@/assets/data/china1';
-import {
-  allProvince_geojson
-} from '@/assets/data/province1';
 
-import OutLine from './three/Outline';
+// import OutLine from './three/Outline';
 
 import {
   getMeshPhongMaterial as _gmpm,
