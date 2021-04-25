@@ -96,7 +96,7 @@
         </section>
       </div>
     </div>
-    <div :style="{ 'opacity': showSouthImage ? 1 : 0 }" class="side-image">
+    <div v-if="false" :style="{ 'opacity': showSouthImage ? 1 : 0 }" class="side-image">
     </div>
   </div>
 </template>
@@ -399,17 +399,17 @@ export default {
   }
 }
 
-.side-image {
-  position: absolute;
-  left: 55vw;
-  top: 71vh;
-  height: 230px;
-  width: 152px;
-  background-image: url(../../assets/imgs/chinaS.png);
-  background-size: 100%;
-  background-repeat: no-repeat;
-  transition: opacity .2s ease-out;
-}
+// .side-image {
+//   position: absolute;
+//   left: 55vw;
+//   top: 71vh;
+//   height: 230px;
+//   width: 152px;
+//   background-image: url(../../assets/imgs/chinaS.png);
+//   background-size: 100%;
+//   background-repeat: no-repeat;
+//   transition: opacity .2s ease-out;
+// }
 </style>
 
 <style lang="less">
@@ -438,6 +438,7 @@ export default {
     border-radius: 50%;
     animation: _scale1 1.4s linear 0.7s infinite;
     position: relative;
+    opacity: 0;
     top: -15px;
   }
 
@@ -449,6 +450,7 @@ export default {
     background: transparent;
     position: relative;
     top: -36px;
+    opacity: 0;
     animation: _scale2 1.4s linear infinite;
   }
   @keyframes _scale1 {
@@ -490,24 +492,19 @@ export default {
 }
 .city_marker {
   will-change: auto;
-  color: aqua;
+  color: #fff;
   display: flex;
-  transition: all 0.5s ease;
+  transition: all 1s ease;
   will-change: auto;
-  transition: transform 1s 0.5s;
-  transform: translate3d(20px, 0, 0) scale3d(1, 1, 1);
+  position: relative;
+  left: 20px;
+  font-size: 14px;
+  transform: scale3d(1, 1, 1);
 
   &.big {
     font-size: 34px;
-    transform: translate3d(20px, 0, 0) scale3d(1.5, 1.5, 1);
+    transform: scale3d(1.5, 1.5, 1.5);
   }
-  // &.paused {
-  //   .left {
-  //     .circle1, .circle2 {
-  //       animation-play-state: paused;
-  //     }
-  //   }
-  // }
 
   .left {
     width: 44px;
@@ -518,12 +515,14 @@ export default {
     position: relative;
 
     .icon {
+      position: relative;
       width: 18px;
       height: 24px;
       margin-left: 1px;
       background-size: 100%;
       background-position: center;
       background-repeat: no-repeat;
+      z-index: 11;
     }
 
     .circle1 {
@@ -532,9 +531,11 @@ export default {
       background: transparent;
       border: 2px solid var(--themeColor);
       border-radius: 50%;
-      animation: scale 1.4s linear 0.7s infinite;
+      animation: _scale 1.4s linear 0.7s infinite;
       position: relative;
       top: -8px;
+      opacity: 0;
+      z-index: 10;
     }
 
     .circle2 {
@@ -545,9 +546,19 @@ export default {
       background: transparent;
       position: relative;
       top: -22px;
-      animation: scale 1.4s linear infinite;
+      z-index: 10;
+      opacity: 0;
+      animation: _scale 1.4s linear infinite;
     }
   }
+
+  // &.paused {
+  //   .left {
+  //     .circle1, .circle2 {
+  //       // visibility: hidden !important;
+  //     }
+  //   }
+  // }
 
   &.data_map3d {
     .left .icon {
@@ -567,7 +578,8 @@ export default {
 
   .right {
     position: relative;
-    top: -8px;
+    top: -12px;
+    left: -8px;
     display: flex;
     align-items: center;
     font-size: 16px;
@@ -580,7 +592,7 @@ export default {
     text-align: left;
   }
   
-  @keyframes scale {
+  @keyframes _scale {
     0% {
       transform: scale3d(0, 0, 0);
       border-color: var(--themeColor);

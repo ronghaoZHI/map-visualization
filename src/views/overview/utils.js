@@ -71,9 +71,21 @@ export const getPolygonsByFeatures = (features, height = 0) => {
 	三维数据 data_3d  #F4BB28
  */
 export const themeColor = {
-  'data_map3d': '#7172FF',
-  'data_capture': '#1980FF',
-  'data_3d': '#F4BB28',
+  'data_map3d': {
+    main: '#7172FF',
+    outline: '#999CEB',
+    inline: '#55589f'
+  },
+  'data_capture': {
+    main: '#4BA0FA',
+    outline: '#81b9f4',
+    inline: '#48729e'
+  },
+  'data_3d': {
+    main: '#F4BB28',
+    outline: '#fbd300',
+    inline: '#8a7500'
+  },
 };
 export const themeTitle = [
   'map地图',
@@ -85,14 +97,14 @@ export const progressColor = [
     stopColor: '#7172FF',
     startColor: '#B360FF'
   }, {
-    stopColor: '#1980FF',
+    stopColor: '#4BA0FA',
     startColor: '#03CCA4'
   }, {
     stopColor: '#F4BB28',
     startColor: '#FF6F00'
   }
 ];
-
+// id 用于服务端查询服务类型标识
 export const sceneTypes = Object.keys(themeColor).map((v, i) => {
   return {
     dataType: v,
@@ -105,16 +117,16 @@ export const sceneTypes = Object.keys(themeColor).map((v, i) => {
 // 
 export const directlyCity = [
   {
-    adcode: 110000,
+    adcode: '110000',
     name: '北京市',
   }, { 
-    adcode: 120000,
+    adcode: '120000',
     name: '天津市',
   }, {
-    adcode: 310000,
+    adcode: '310000',
     nmae: '上海市',
   }, {
-    adcode: 500000,
+    adcode: '500000',
     name: '重庆市',
   }
 ];
@@ -196,4 +208,10 @@ export const getCityCenterByCode = async (code) => {
       }
     });
   });
+}
+
+export const getCityFeaturesByCode = async (provinceCode) => {
+  const res = await fetch('/data/' + provinceCode + '.json');
+  const r = await res.json();
+  return r.features;
 }

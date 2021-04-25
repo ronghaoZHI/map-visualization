@@ -22,6 +22,7 @@ import {
   themeTitle as tTitle,
   getAllCityList,
   getCityCenterByCode,
+  getCityFeaturesByCode,
 } from './utils';
 
 let THREE = window.THREE;
@@ -57,32 +58,43 @@ const chinaMeshColor = {
 };
 let progressColor = pColor[0];
 let themeTitle = tTitle[0];
+const china_outline_width = 2;
 const material = _gmpm(chinaMeshColor.black);
-// 可设置宽度线
-const lineMaterial_china = _glm2({
-  color: themeColor[curType.dataType],
+// 可设置宽度线 _glm2
+const lineMaterial_china_outline = _glm2({
+  color: themeColor[curType.dataType].outline,
   opacity: 1,
-  linewidth: 2,
+  linewidth: china_outline_width,
 });
-const lineMaterial_province_outline = _glm2({
-  color: themeColor[curType.dataType],
+const lineMaterial_china_inline = _glm2({
+  color: themeColor[curType.dataType].inline,
   opacity: .3,
   linewidth: 1,
 });
-// 可设置宽度线
-const lineMaterial_province2 = _glm2({
-  color: themeColor[curType.dataType],
+const lineMaterial_province_inline = _glm2({
+  color: themeColor[curType.dataType].inline,
+  opacity: .3,
+  linewidth: 1,
+});
+const lineMaterial_province_outline = _glm2({
+  color: themeColor[curType.dataType].outline,
   opacity: 1.0,
   linewidth: 2,
 });
-// 1px 线, 不能设置宽度
+
+// 1px线, 不能设置宽度 _glm
 const lineMaterial_province = _glm({
-  color: themeColor[curType.dataType],
+  color: themeColor[curType.dataType].outline,
   opacity: 1.0
 });
 // 
-let china_mesh, china_outLine_mesh, all_province_ouline_mesh;
-let province_mesh, province_outLine_mesh,
+let china_mesh,
+  china_outLine_mesh,
+  all_province_ouline_mesh = [];
+// 
+let province_mesh, 
+  province_outLine_mesh_top,
+  all_province_inline_mesh_top = [],
   province_outLine_mesh_buttom, 
   province_outLine_mesh_height,
   provinceHeight = 30000,
@@ -94,7 +106,16 @@ let city_marker,
   marker_dom,
   history_markers = []; // 存放历史 marker
 let showHistoryMaker;
-
+// 高度特殊处理的省份
+const spec_citys = [
+  '440000', '450000', '460000', 
+  '810000', '820000', '710000', 
+  '330000', '360000', '450000', 
+  '430000', '35000', '530000', 
+  '500000', '310000', '420000',
+  '520000', '510000',
+];
+// 
 initMarker();
 
 // 初始化一次
@@ -162,7 +183,7 @@ async function runMain(_vue) {
     // 更新类型
     changeSceneType(_vue, curCityList, {
       type: curType,
-      color: themeColor[curType.dataType],
+      colors: themeColor[curType.dataType],
       progressColor,
       themeTitle,
     });
@@ -189,7 +210,8 @@ async function runMain(_vue) {
           name: curCity.areaName,
           center: center,
           location: location,
-          offset: curCity.geojson.properties.offset
+          offset: curCity.geojson.properties.offset,
+          offsetH: curCity.geojson.properties.offsetH,
         })
       } else if (
         curCity.parentCode.toString().substring(0, 2) ==
@@ -208,7 +230,9 @@ async function runMain(_vue) {
       } else {
         await sleep(1000);
         // 
-        await province2China(_vue, {})
+        await province2China(_vue, {
+          adcode: lastCity.geojson.properties.adcode,
+        })
         await sleep(2000);
         // 
         await china2Province(_vue, {
@@ -217,7 +241,8 @@ async function runMain(_vue) {
           name: curCity.areaName,
           center: center,
           location: location,
-          offset: curCity.geojson.properties.offset
+          offset: curCity.geojson.properties.offset,
+          offsetH: curCity.geojson.properties.offsetH,
         })
 
         sleep(3000);
@@ -233,7 +258,9 @@ async function runMain(_vue) {
     }
     // 复位
     await sleep(1000);
-    await province2China(_vue, {});
+    await province2China(_vue, {
+      adcode: lastCity.geojson.properties.adcode,
+    });
     await sleep(500);
   }
 
@@ -264,7 +291,8 @@ async function _initVue(_vue, curCityList) {
 // 根据城市code/pos  => 获取省份 code => geojson => province_mesh  province_outLine_mesh
 export const addProvinceLayer = async ({
   adcode,
-  name
+  name,
+  offsetH
 }) => {
   let meshs = [];
   const features = _gfc(adcode, name);
@@ -272,7 +300,8 @@ export const addProvinceLayer = async ({
   let polygons_province = features.map(f => {
     const polygon = maptalks.GeoJSON.toGeometry(f);
     polygon.setProperties({
-      height: provinceHeight - 1000,
+      // height: provinceHeight - (offsetH || 1000),
+      height: provinceHeight - (offsetH || 1000),
     });
     return polygon;
   });
@@ -280,29 +309,36 @@ export const addProvinceLayer = async ({
   province_mesh = threeLayer.toExtrudePolygons(polygons_province, {
     interactive: false,
     altitude: 10,
-    topColor: '#fff'
+    // topColor: '#fff'
   }, material);
   
   // mesh - fatLines
   const geoLines = _polygonToLine(features[0]);
   const lineStrings = maptalks.GeoJSON.toGeometry(geoLines);
-  province_outLine_mesh = threeLayer.toFatLines(lineStrings, {
+  province_outLine_mesh_top = threeLayer.toFatLines(lineStrings, {
     interactive: false,
-    altitude: 1,
-  }, lineMaterial_province2);
+    altitude: 10,
+  }, lineMaterial_province_outline);
 
   province_outLine_mesh_buttom = threeLayer.toFatLines(lineStrings, {
     interactive: false,
-    altitude: 1100,
-  }, lineMaterial_province2);
+    altitude: 100,
+  }, lineMaterial_province_outline);
 
   province_outLine_mesh_height = threeLayer.toFatLines(lineStrings, {
     interactive: false,
-    altitude: 1,
+    altitude: 1000,
     mode: 'height',
     bottom: 0,
     top: provinceOutlineMeshHeight,
-  }, lineMaterial_province2, threeLayer);
+  }, lineMaterial_province_outline, threeLayer);
+
+  // if(directlyCity.map(v => v.adcode).includes(adcode)) {
+  //   all_province_inline_mesh_top = [];
+  // }
+  all_province_inline_mesh_top = await getAllCityMeshByCode(adcode);
+  all_province_inline_mesh_top.forEach(v => meshs.push(v));
+  
 
   // mesh OutLine , lineWidth always 1px
   // province_outLine_mesh = new OutLine(province_mesh, {
@@ -312,7 +348,7 @@ export const addProvinceLayer = async ({
 
   
   meshs.push(province_mesh);
-  meshs.push(province_outLine_mesh);
+  meshs.push(province_outLine_mesh_top);
   meshs.push(province_outLine_mesh_buttom);
   meshs.push(province_outLine_mesh_height);
 
@@ -327,11 +363,17 @@ export const addProvinceLayer = async ({
       province_mesh.getObject3d().scale.z = scale;
       // province_outLine_mesh.getObject3d().scale.z = scale;
       // 
-      province_outLine_mesh.setAltitude(provinceHeight * 1 * scale);
+      if(spec_citys.includes(adcode)) {
+        province_outLine_mesh_top.setAltitude(provinceHeight * 1.2 * scale);
+        all_province_inline_mesh_top.forEach(v => v.setAltitude(provinceHeight * 1.2 * scale));
+      } else {
+        province_outLine_mesh_top.setAltitude(provinceHeight * 1.05 * scale);
+        all_province_inline_mesh_top.forEach(v => v.setAltitude(provinceHeight * 1.05 * scale));
+      }
       // 
       province_outLine_mesh_height.getObject3d().scale.z = scale;
 
-      if (++time >= 40) {
+      if (time++ >= 40) {
         clearInterval(timer);
       };
     }, 50);
@@ -352,7 +394,7 @@ export const addProvinceLayer = async ({
 // 三种数据类型 循环切换， 分别对应三种主题色
 export const changeSceneType = async (_vue, curCityList, {
   type,
-  color,
+  colors,
   progressColor,
   themeTitle
 }) => {
@@ -365,19 +407,18 @@ export const changeSceneType = async (_vue, curCityList, {
   const name = cityList[0].areaName;
   const location = await getCityCenterByCode(cityList[0].parentCode);
   await updateCityMarker(name, location);
-
   // update css themeColor
-  document.documentElement.style.setProperty('--themeColor', color);
+  document.documentElement.style.setProperty('--themeColor', colors.main);
   // 
   marker_dom = document.querySelector('.city_marker');
   sceneTypes.forEach(v => marker_dom.classList.remove(v.dataType));
   marker_dom.classList.add(type.dataType);
-
   // update material color
-  lineMaterial_china.color.setStyle(color);
-  lineMaterial_province_outline.color.setStyle(color);
-  lineMaterial_province.color.setStyle(color);
-  lineMaterial_province2.color.setStyle(color);
+  lineMaterial_china_outline.color.setStyle(colors.outline);
+  lineMaterial_china_inline.color.setStyle(colors.inline);
+  lineMaterial_province_inline.color.setStyle(colors.inline);
+  lineMaterial_province.color.setStyle(colors.outline);
+  lineMaterial_province_outline.color.setStyle(colors.outline);
 
   // update VuePage
   // 右侧 数据类型滚动、覆盖率比例更新、城市列表更新
@@ -421,7 +462,7 @@ export const changeSceneType = async (_vue, curCityList, {
   }
 }
 // 
-export const province2China = async (_vue, {}) => {
+export const province2China = async (_vue, { adcode }) => {
   // console.log('province2China');
   // mesh 渐变下降
   {
@@ -433,28 +474,36 @@ export const province2China = async (_vue, {}) => {
       // 
       // province_outLine_mesh.getObject3d().scale.z = scale;
       // 
-      province_outLine_mesh.setAltitude(provinceHeight * 1 * scale);
+      if(spec_citys.includes(adcode)) {
+        province_outLine_mesh_top.setAltitude(provinceHeight * 1.2 * scale);
+        all_province_inline_mesh_top.forEach(v => v.setAltitude(provinceHeight * 1.2 * scale));
+      } else {
+        province_outLine_mesh_top.setAltitude(provinceHeight * 1.05 * scale);
+        all_province_inline_mesh_top.forEach(v => v.setAltitude(provinceHeight * 1.05 * scale));
+      }
       // 
       province_outLine_mesh_height.getObject3d().scale.z = scale;
 
-      if (++time >= 40) {
+      if (time++ >= 40) {
         clearInterval(timer);
         // threeLayer.removeMesh(province_mesh);
-        // threeLayer.removeMesh(province_outLine_mesh);
+        // threeLayer.removeMesh(province_outLine_mesh_top);
         // threeLayer.removeMesh(province_outLine_mesh_buttom);
         // threeLayer.removeMesh(province_outLine_mesh_height);
 
         if(threeLayer.getMeshes().length > 6) {
           for (let i = 0; i < 4; i++) {
-            threeLayer.removeMesh(threeLayer.getMeshes().pop());
+            const m = threeLayer.getMeshes().pop();
+            threeLayer.removeMesh(m);
           }
         }
+        all_province_inline_mesh_top.forEach(v => threeLayer.removeMesh(v));
       };
     }, 50);
   };
 
   await sleep(2000);
-  
+  threeLayer.renderScene();
   // 更新图层透明效果
   {
     let time = 0;
@@ -478,8 +527,8 @@ export const province2China = async (_vue, {}) => {
   marker_dom = document.querySelector('.city_marker');
   marker_dom.classList.remove('big');
   // 边界呈现
-  lineMaterial_china.linewidth = 2;
-  lineMaterial_province_outline.linewidth = 1;
+  lineMaterial_china_outline.linewidth = china_outline_width;
+  lineMaterial_china_inline.linewidth = 1;
   
   await sleep(1500);
   _vue.showSouthImage = true;
@@ -494,6 +543,7 @@ export const china2Province = async (_vue, {
   name,
   center,
   offset,
+  offsetH,
   location
 }) => {
   // console.log('china2Province');
@@ -509,10 +559,11 @@ export const china2Province = async (_vue, {
   _vue.showSouthImage = false;
   // 边界消失
   setTimeout(() => {
-    lineMaterial_china.linewidth = 0;
-    lineMaterial_province_outline.linewidth = 0;
+    lineMaterial_china_outline.linewidth = 0;
+    lineMaterial_china_inline.linewidth = 0;
   }, 800);
   
+
   // 更新图层透明效果
   setTimeout(() => {
     let time = 0;
@@ -536,7 +587,8 @@ export const china2Province = async (_vue, {
   // 
   await addProvinceLayer({
     adcode,
-    name
+    name,
+    offsetH
   });
   return Promise.resolve();
 }
@@ -585,17 +637,14 @@ function initMarker() {
 // 
 async function updateCityMarker(label, [lon, lat]) {
   // debugger
-  // marker_dom = document.querySelector('.city_marker');
-  // marker_dom.classList.add('paused');
   showHistoryMaker && showHistoryMaker();
   city_marker.updateMarkerText(label);
   // 更新位置
   const coord = new maptalks.Coordinate(lon, lat);
   city_marker.setCoordinates(coord);
   showHistoryMaker = addHistoryMakers(city_marker);
-  await sleep(0);
-  // marker_dom = document.querySelector('.city_marker');
-  // marker_dom.classList.remove('paused');
+  await sleep(10);
+
   return Promise.resolve();
 }
 
@@ -607,23 +656,29 @@ function initChinaLayer() {
     forceRenderOnRotating: true,
     forceRenderOnZooming: true,
   });
-  animation();
-  var meshs = [];
+  // animation();
+  const meshs = [];
 
   threeLayer.prepareToDraw = function(gl, scene, camera) {
     // 
-    const light = new THREE.DirectionalLight('0xffffff');
-    light.position.set(0, -10, 10).normalize();
-    light.castShadow = true;
+    // const light = new THREE.DirectionalLight(0xffffff);
+    // light.position.set(0, -10, 10).normalize();
+    // light.castShadow = true;
+    // scene.add(light);
+    // 
+    const light = new THREE.AmbientLight(0xffffff, 1);
+    light.position.set(88451.17372643555, 29155.32129677105, 75674.8725946847).normalize();
     scene.add(light);
-    camera.add(new THREE.PointLight('#fff', 0.5));
+
+    // camera.add(new THREE.DirectionalLight(0xffffff, 0.7));
+    camera.add(new THREE.PointLight(0xffffff, 0.3));
 
     // 构建 china mesh // 添加一次  后面效果根据全局的 mesh对象 更改材质即可
     let china_features = china_geojson.features;
     const polygons_china = _gpf(china_features);
     china_mesh = threeLayer.toExtrudePolygons(polygons_china, {
       interactive: false,
-      topColor: '#fff',
+      // topColor: '#fff',
       altitude: 1
     }, material);
     meshs.push(china_mesh);
@@ -634,14 +689,7 @@ function initChinaLayer() {
     const lineStrings = maptalks.GeoJSON.toGeometry(geoLines);
     china_outLine_mesh = threeLayer.toFatLines(lineStrings, {
       interactive: false,
-    }, lineMaterial_china);
-
-    // china_outLine_mesh = new OutLine(china_mesh, {
-    //   interactive: false,
-    //   // altitude: 1,
-    //   lineWidth: 5
-    // }, lineMaterial_china, threeLayer);
-
+    }, lineMaterial_china_outline);
     // 
     all_province_ouline_mesh = getAllProvinceMesh();
     all_province_ouline_mesh.forEach(v => meshs.push(v));
@@ -671,16 +719,6 @@ function addHistoryMakers(city_marker) {
   return show;
 }
 
-function animation() {
-  // layer animation support Skipping frames
-  threeLayer._needsUpdate = !threeLayer._needsUpdate;
-  if (threeLayer._needsUpdate) {
-      threeLayer.renderScene();
-      // map._renderer()
-  }
-  requestAnimationFrame(animation);
-}
-
 function getAllProvinceMesh() {
   return getAllProvinceFeatures().map(v => {
     const geoLines = _polygonToLine(v);
@@ -689,8 +727,23 @@ function getAllProvinceMesh() {
     let province_outLine_mesh = threeLayer.toFatLines(lineStrings, {
       interactive: false,
       altitude: 10,
-    }, lineMaterial_province_outline);
+    }, lineMaterial_china_inline);
 
     return province_outLine_mesh;
+  })
+}
+
+async function getAllCityMeshByCode(provinceCode) {
+  const allCity = await getCityFeaturesByCode(provinceCode);
+  return allCity.map(v => {
+    const geoLines = _polygonToLine(v);
+    const lineStrings = maptalks.GeoJSON.toGeometry(geoLines);
+
+    let province_inline_mesh = threeLayer.toFatLines(lineStrings, {
+      interactive: false,
+      altitude: 100,
+    }, lineMaterial_province_inline);
+
+    return province_inline_mesh;
   })
 }

@@ -35,11 +35,7 @@ html, body, #app {
 }
 
 html {
-  --themeColor: #6166F9;
-  /* 
-   map地图数据 #6166F9
-   采集数据  #4BA0FA
-   三维数据  #F4BB28
-  */
+  /* 全局主题色 */
+  --themeColor: #7172ff;
 }
 </style>

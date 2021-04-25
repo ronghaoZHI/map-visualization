@@ -7217,7 +7217,7 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
-			"zoom": 8.8,
+			"zoom": 8.5,
       "offset": [0.6, 0],
       "adcode": "310000",
       "name": "上海市",
@@ -8692,7 +8692,7 @@ export const allProvince_geojson = {
     "type": "Feature",
     "properties": {
 			"zoom": 7,
-      "offset": [4, 0.7],
+      "offset": [3, 0.7],
       "adcode": "340000",
       "name": "安徽省",
       "center": [117.283042, 31.86119],
