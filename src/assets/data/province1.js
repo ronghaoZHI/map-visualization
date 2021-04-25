@@ -4164,7 +4164,7 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
-			"zoom": 6.7,
+			"zoom": 7.0,
       "offset": [5, 0.0],
       "adcode": "210000",
       "name": "辽宁省",
@@ -4974,7 +4974,7 @@ export const allProvince_geojson = {
   }, {
     "type": "Feature",
     "properties": {
-			"zoom": 6.7,
+			"zoom": 7.0,
       "offset": [6, 0.7],
       "adcode": "220000",
       "name": "吉林省",
