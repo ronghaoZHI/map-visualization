@@ -22,7 +22,7 @@
           <swiper class="swiper-type" ref="swiper-type" :options="swiperTypeOpt">
             <swiper-slide class="data-type">
               <div>
-                <span class="title">AirlookMap地图面积</span>
+                <span class="title">Map地图面积</span>
                 <span :style="{ 'opacity': showNumber ? 1 : 0 }" class="number"
                   ><span class="num">{{ areaTotalList[0] || 0 }}</span> km²</span
                 >
@@ -44,7 +44,7 @@
                 >
               </div>
             </swiper-slide>
-           
+
           </swiper>
         </section>
         <section class="middle">
@@ -70,7 +70,7 @@
             </ProgressBar>
             <div class="label-wrap">
               <div class="city1">
-                <CircleIcon 
+                <CircleIcon
                   class="img"
                   :startColor="progressStartColor"
                   :stopColor="progressStopColor"
@@ -82,7 +82,7 @@
                   class="img"
                   startColor="#949494"
                   stopColor="#676767"
-                ></CircleIcon> 
+                ></CircleIcon>
                 <span class="name">待采集城市</span>
               </div>
             </div>
@@ -203,9 +203,8 @@ export default {
     width: 454px;
     .logo {
       margin-top: 6px;
-      width: 220px;
+      // width: 220px;
       height: 30px;
-      background-image: url(../../assets/imgs/logo.svg);
       background-repeat: no-repeat;
       background-size: 100%;
     }
@@ -375,7 +374,7 @@ export default {
           display: flex;
           flex-direction: row;
         }
-        .city1 , 
+        .city1 ,
         .city2 {
           .img {
             width: 15px;
@@ -591,7 +590,7 @@ export default {
     letter-spacing: 1px;
     text-align: left;
   }
-  
+
   @keyframes _scale {
     0% {
       transform: scale3d(0, 0, 0);

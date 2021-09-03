@@ -1,13 +1,13 @@
 const THREE = window.THREE;
 const maptalks = window.maptalks;
 const _districtService = new window.AMap.DistrictSearch({
-  subdistrict: 1, 
+  subdistrict: 1,
   showbiz: false,
   level: 'city',
   // extensions: 'all'
 });
 
-// 
+//
 export const getMeshPhongMaterial = (color) => {
   const material = new THREE.MeshPhongMaterial({
     // map: texture,
@@ -19,7 +19,7 @@ export const getMeshPhongMaterial = (color) => {
   return material;
 }
 
-// 
+//
 export const getLineMaterial = ({color = '#7172FF', opacity = 1.0, linewidth = 1}) => {
   const lineMaterial = new THREE.LineBasicMaterial({
     color, // 线的颜色
@@ -36,7 +36,7 @@ export const getLineMaterial = ({color = '#7172FF', opacity = 1.0, linewidth = 1
 
   return lineMaterial;
 }
-// 
+//
 export const getLineMaterial2 = ({color = '#7172FF', opacity = 1.0, linewidth = 3}) => {
   const lineMaterial = new THREE.LineMaterial({
     color, // 线的颜色
@@ -53,7 +53,7 @@ export const getLineMaterial2 = ({color = '#7172FF', opacity = 1.0, linewidth = 
 
   return lineMaterial;
 }
-// 
+//
 export const getPolygonsByFeatures = (features, height = 0) => {
   const polygons = features.map(f => {
     const polygon = maptalks.GeoJSON.toGeometry(f);
@@ -105,21 +105,22 @@ export const progressColor = [
   }
 ];
 // id 用于服务端查询服务类型标识
-export const sceneTypes = Object.keys(themeColor).map((v, i) => {
-  return {
-    dataType: v,
-    id: i == 0 ?
-      '13' : 
-      i == 1 ? 
-      '1' : '12',
-  }
-});
-// 
+export const sceneTypes = [{dataType: 'data_map3d', id:'13'}]
+// Object.keys(themeColor).map((v, i) => {
+//   return {
+//     dataType: v,
+//     id: i == 0 ?
+//       '13' :
+//       i == 1 ?
+//       '1' : '12',
+//   }
+// });
+//
 export const directlyCity = [
   {
     adcode: '110000',
     name: '北京市',
-  }, { 
+  }, {
     adcode: '120000',
     name: '天津市',
   }, {
@@ -130,32 +131,37 @@ export const directlyCity = [
     name: '重庆市',
   }
 ];
-// 
+//
 import {
   allProvince_geojson
 } from '@/assets/data/province1';
 
-export const getFeaturesByCode = (adcode, name) => 
-  [allProvince_geojson.features.find(v => 
+export const getFeaturesByCode = (adcode, name) =>
+  [allProvince_geojson.features.find(v =>
     (v.properties.adcode == adcode || v.properties.name == name)
   )];
 //
-export const getAllProvinceFeatures = () => 
+export const getAllProvinceFeatures = () =>
   allProvince_geojson.features;
-// 
+//
 export const sleep = (time) => {
   return new Promise(res => {
     setTimeout(res, time);
   });
 };
 
-import { getCityCount, getCityList, getAllDataArea } from '../../api/index';
+// import { getCityCount, getCityList, getAllDataArea } from '../../api/index';
 
 export const getAllCityList = async () => {
   const len = sceneTypes.length;
-  const cityLists = sceneTypes.map(v => getCityList({ dataType: v.id }));
-  const cityCounts = sceneTypes.map(v => getCityCount({ dataType: v.id }));
-  const { data: allDataArea } = await getAllDataArea();
+  // by api
+  // const cityLists = sceneTypes.map(v => getCityList({ dataType: v.id }));
+  // const cityCounts = sceneTypes.map(v => getCityCount({ dataType: v.id }));
+  // const { data: allDataArea } = await getAllDataArea();
+  // by json
+  const cityLists = [require('../../api/all-citylist.json')]
+  const cityCounts= [{"code":200,"msg":"成功","data":{"count":19,"totalCount":369}}]
+  const { data: allDataArea } = require('../../api/all-dataarea.json')
   const areaTotals = [
     allDataArea.publishedMapArea.totalArea,
     allDataArea.originalArea.totalArea,
@@ -190,7 +196,7 @@ export const getAllCityList = async () => {
       return v;
     })
   } catch (error) {
-    console.error(error);   
+    console.error(error);
   }
 
   return Promise.resolve(result);

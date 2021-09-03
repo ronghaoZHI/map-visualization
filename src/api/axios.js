@@ -2,7 +2,7 @@ import axios from "axios";
 
 let config = {
   // baseURL: '/',
-  baseURL: process.env.NODE_ENV =='development' ? '//tdata.airlook.com' : "//data.airlook.com",
+  baseURL: process.env.NODE_ENV =='development' ? '//tdata.airlook.com' : "",
   timeout: 15 * 1000, // Timeout
 };
 

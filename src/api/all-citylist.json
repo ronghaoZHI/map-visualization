@@ -1,0 +1,73 @@
+{
+    "code": 200,
+    "msg": "成功",
+    "requestId": "5e0d5c511fe4f2bc",
+    "data": [
+        {
+            "areaCode": "110000",
+            "parentCode": "110000",
+            "areaName": "北京市",
+            "totalArea": 552020.8
+        },
+        {
+            "areaCode": "120000",
+            "parentCode": "120000",
+            "areaName": "天津市",
+            "totalArea": 82526238.03
+        },
+        {
+            "areaCode": "140100",
+            "parentCode": "140000",
+            "areaName": "太原市",
+            "totalArea": 951677.14
+        },
+        {
+            "areaCode": "230100",
+            "parentCode": "230000",
+            "areaName": "哈尔滨市",
+            "totalArea": 1844984.61
+        },
+        {
+            "areaCode": "330500",
+            "parentCode": "330000",
+            "areaName": "湖州市",
+            "totalArea": 19463396.22
+        },
+        {
+            "areaCode": "371300",
+            "parentCode": "370000",
+            "areaName": "临沂市",
+            "totalArea": 1592744.5
+        },
+        {
+            "areaCode": "420500",
+            "parentCode": "420000",
+            "areaName": "宜昌市",
+            "totalArea": 15386932.17
+        },
+        {
+            "areaCode": "440100",
+            "parentCode": "440000",
+            "areaName": "广州市",
+            "totalArea": 201613.74
+        },
+        {
+            "areaCode": "460400",
+            "parentCode": "460000",
+            "areaName": "儋州市",
+            "totalArea": 41014131.82
+        },
+        {
+            "areaCode": "500000",
+            "parentCode": "500000",
+            "areaName": "重庆市",
+            "totalArea": 1329510.13
+        },
+        {
+            "areaCode": "610400",
+            "parentCode": "610000",
+            "areaName": "咸阳市",
+            "totalArea": 28805832.89
+        }
+    ]
+}

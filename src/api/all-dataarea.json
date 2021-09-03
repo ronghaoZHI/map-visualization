@@ -1,0 +1,30 @@
+{
+  "code": 200,
+  "msg": "成功",
+  "requestId": "2264f4b5718b879a",
+  "data": {
+    "areaCode": "0",
+    "areaName": "中国",
+    "originalArea": {
+      "totalArea": 5651502441.72,
+      "growthArea": 0,
+      "growthMonth": 0
+    },
+    "outcome2DArea": {
+      "totalArea": 141722439554.46,
+      "growthArea": 0,
+      "growthMonth": 0
+    },
+    "outcome3DArea": {
+      "totalArea": 9283647636.16,
+      "growthArea": 0,
+      "growthMonth": 0
+    },
+    "publishedMapArea": {
+      "totalArea": 193669082.05,
+      "growthArea": 0,
+      "growthMonth": 0
+    },
+    "statisticTime": 1625155200000
+  }
+}
