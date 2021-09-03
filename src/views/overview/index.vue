@@ -22,7 +22,7 @@
           <swiper class="swiper-type" ref="swiper-type" :options="swiperTypeOpt">
             <swiper-slide class="data-type">
               <div>
-                <span class="title">Map地图面积</span>
+                <span class="title">map地图面积</span>
                 <span :style="{ 'opacity': showNumber ? 1 : 0 }" class="number"
                   ><span class="num">{{ areaTotalList[0] || 0 }}</span> km²</span
                 >
